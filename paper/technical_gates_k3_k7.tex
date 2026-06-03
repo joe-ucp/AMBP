@@ -1,0 +1,1060 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs,longtable,array}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{3em}
+
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{requiredlemma}{Required Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+
+\title{Technical Gates for Amplification Payment:\\
+K3--K7 Source-Ledger Burden}
+\author{Joseph Roy}
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This note isolates the mathematical proof burden that is imported by the public
+paper \emph{Amplification Must Be Paid}.  It is a trimmed technical ledger for
+the downstream gates K3--K7: quantitative quotient-or-charge, forward
+absorption, reverse matrix absorption, high-strain transport rigidity, spectral
+and loop-gap certification, and compatibility with the regularity bridge.
+
+The note starts after the upstream source-promotion data have been granted:
+there is a scale sequence \(r_n\downarrow0\), a candidate point \(z_0\), a
+positive source ledger \(P(r_n)\), and promoted finite-thickness source
+families with fixed capture fraction \(\eta>0\).  The purpose here is to state
+what K3--K7 must prove, how the constants feed the loop, and where each open
+analytic burden remains.
+\end{abstract}
+
+\clearpage
+\section{Scope and Inputs}
+\label{sec:scope}
+
+This file is deliberately narrower than the full source-packing program.  It
+does not re-prove source persistence, source promotion, or construction of the
+promoted family.  It assumes that those upstream objects have been supplied and
+then asks whether the downstream ledger can close.
+
+\begin{assumption}[Upstream promoted-source package]
+\label{ass:upstream-package}
+Along a scale sequence \(r_n\downarrow0\) at a candidate point \(z_0=(x_0,T)\),
+assume:
+\begin{enumerate}
+\item \(P(r_n)\ge p_*>0\);
+\item a promoted finite-thickness source family captures a fixed fraction
+\(\eta>0\) of the source;
+\item the promoted family has the usual core/collar/tail decomposition and
+finite-overlap bookkeeping;
+\item quotient redundancy, if it occurs, is a genuine identification of the
+same physical source and not a new nonredundant amplification channel.
+\end{enumerate}
+\end{assumption}
+
+The downstream proof burden is:
+\[
+\text{K3}+\text{K4}+\text{K5/K5B}+\text{K6}+\text{K7}.
+\]
+The constant ledger at the end of the note shows why qualitative positivity is
+not enough: the loop closes only under a strict numerical gap.
+
+\clearpage
+\section{Definitions and Denominator}
+\label{sec:definitions}
+
+Fix
+\[
+Q_r(z_0):=B_r(x_0)\times(T-r^2,T),
+\qquad
+\sigma_+:=(\omega\cdot S\omega)_+,
+\]
+and define the source ledger
+\begin{equation}
+\label{eq:P-def}
+P(r):=r\iint_{Q_r(z_0)}\sigma_+\,dx\,dt .
+\end{equation}
+
+\begin{assumption}[Local source-ledger finiteness]
+\label{ass:source-finite}
+For every fixed parent cylinder used in the ledger,
+\[
+P(r_0)=r_0\iint_{Q_{r_0}(z_0)}\sigma_+\,dx\,dt<\infty.
+\]
+This is automatic in smooth pre-singular cylinders.  In a suitable-weak
+formulation it is a standing local source-finiteness or truncation hypothesis.
+\end{assumption}
+
+The scale-critical strain variable is
+\[
+S_r(x,t):=r^2|S_{\mathrm{loc}}(x,t)|,
+\]
+and the strain row is
+\begin{equation}
+\label{eq:strain-row}
+\mathfrak B_{\mathrm{strain}}(r)
+:=
+r\iint_{\mathcal U_r}\sigma_+ S_r\phi^2\,dx\,dt
+=
+r^3\iint_{\mathcal U_r}\sigma_+|S_{\mathrm{loc}}|\phi^2\,dx\,dt .
+\end{equation}
+The unnormalized term
+\[
+r\iint\sigma_+|S_{\mathrm{loc}}|\phi^2
+\]
+is supercritical and is not part of the live denominator.
+
+Use the row vector
+\begin{equation}
+\label{eq:X-def}
+X(r):=
+\begin{pmatrix}
+\mathcal E_\omega\\
+\mathcal B_\omega\\
+\mathcal D_{\mathrm{ARR}}\\
+\mathfrak B_{\mathrm{strain}}\\
+M_{\mathrm{deact}}\\
+\mathcal E_\nu^{\mathrm{coh},+}
+\end{pmatrix},
+\qquad
+D(r):=\mathbf 1^T X(r).
+\end{equation}
+The rows are vorticity energy-dissipation, boundary/collar flux, annular
+renewal/tail reservoir, source-weighted strain, deactivation, and positive
+coherent viscous residual.
+
+\begin{definition}[Packed boundary row]
+\label{def:packed-boundary}
+The boundary row \(\mathcal B_\omega(R;z_0)\) is parent-packed, not merely a
+single shell.  It contains a one-scale shell row and the logarithmic collar
+packing
+\[
+\mathcal B_{\omega,\lambda_0}^{\mathrm{pack}}(R;z_0)
+:=
+\sup_{\substack{0<a<b\\ \lambda_0b\le R}}
+\int_a^b
+\mathcal B_\omega^{\mathrm{adv}}(s,\lambda_0;z_0)\frac{ds}{s},
+\]
+where
+\[
+\mathcal B_\omega^{\mathrm{adv}}(s,\lambda_0;z_0)
+:=
+s\iint_{Q_{\lambda_0s}(z_0)\setminus Q_s(z_0)}
+|u-\bar u_{B_{\lambda_0s}}(t)|\,|\omega|^2\,
+|\nabla\phi_{s,\lambda_0}|\,\phi_{s,\lambda_0}\,dx\,dt .
+\]
+This packed convention is part of K5 and K7 compatibility.
+\end{definition}
+
+The mean-subtracted CKN quantity is
+\begin{equation}
+\label{eq:Kms}
+\mathcal K_{\mathrm{CKN}}^{\mathrm{ms}}(r;z_0)
+:=
+r^{-2}\iint_{Q_r(z_0)}
+\Big(|u-\bar u_{B_r}(t)|^3
++|p-\bar p_{B_r}(t)|^{3/2}\Big)\,dx\,dt .
+\end{equation}
+
+\clearpage
+\section{K3: Quantitative Quotient-or-Charge}
+\label{sec:K3}
+
+The K3 burden is to turn nonredundant promoted packing into a positive final
+physical charge.  The final physical ledger must include oscillation/twist,
+because large accumulated strain need not become net shape growth.
+
+On each active branch core choose a source director \(e_j\in S^2\) and use the
+sign-free projector
+\[
+E_j:=e_j\otimes e_j .
+\]
+Define the branch oscillation density
+\begin{equation}
+\label{eq:theta-osc}
+\Theta_{\mathrm{osc}}^{(j)}
+:=
+\min\{1,\ r^2|D_tE_j|+r|\nabla E_j|\},
+\qquad
+D_t:=\partial_t+u\cdot\nabla .
+\end{equation}
+On an overlap \(\Omega_{ij}:=\mathcal T_i\cap\mathcal T_j\cap Q_r\), set
+\begin{equation}
+\label{eq:Phi-osc}
+\Phi_{\mathrm{osc}}(i,j)
+:=
+\min\Bigg\{1,\,
+\frac{
+r\iint_{\Omega_{ij}}\sigma_+
+\big(|E_i-E_j|+\Theta_{\mathrm{osc}}^{(i)}
++\Theta_{\mathrm{osc}}^{(j)}\big)\phi^2\,dx\,dt
+}{
+m_{ij}+\varepsilon
+}\Bigg\},
+\end{equation}
+where
+\[
+m_{ij}:=r\iint_{\Omega_{ij}}\sigma_+\phi^2\,dx\,dt.
+\]
+The family oscillation ledger is the source-weighted average
+\begin{equation}
+\label{eq:Rosc-family}
+R_{\mathrm{osc}}^{\mathrm{fam}}(r)P(r)
+:=
+\sum_{j}P_j(r)R_{\mathrm{osc}}^{(j)}(r)+o_r(1).
+\end{equation}
+The final physical cost is
+\begin{equation}
+\label{eq:Fphys-final}
+\mathcal F_{\mathrm{phys}}^{\mathrm{final}}
+:=
+\mathcal F_{\mathrm{phys}}+R_{\mathrm{osc}}^{\mathrm{fam}}.
+\end{equation}
+
+\begin{definition}[Quantitative final quotient redundancy]
+\label{def:quant-final-redundancy}
+Fix a quotient threshold \(\delta>0\) and let
+\(\sim_\delta^{\mathrm{final}}\) be the equivalence relation generated by
+significant-overlap pairs with
+\(d_{\mathrm{phys}}^{\mathrm{final}}\le\delta\), where the final edge distance
+is defined in \eqref{eq:dphys-final} below.  A promoted family is
+\((\delta,\eta)\)-quotient-redundant at scale \(r\) if, after finite-overlap
+normalization, at least \(\eta P(r)\) of the captured promoted source lies
+inside these quotient classes and the nonclass edge mass satisfies
+\[
+\sum_{(i,j):\,i\not\sim_\delta^{\mathrm{final}}j}m_{ij}
+<c_m^{\mathrm{final}}\eta P(r).
+\]
+Thus redundancy is not a verbal escape clause: it is the branch where captured
+mass is quantitatively accounted for by physical identification.
+\end{definition}
+
+\begin{proposition}[Oscillation ledger stabilization]
+\label{prop:osc-stabilization}
+\(R_{\mathrm{osc}}^{\mathrm{fam}}\) is a separate physical coordinate, not a
+shape, renewal, spread, or activity proxy.  Moreover, \(\Phi_{\mathrm{osc}}\)
+is source-adjoint to \(R_{\mathrm{osc}}^{\mathrm{fam}}\): a heavy
+nonredundant overlap with \(\Phi_{\mathrm{osc}}\ge\delta\) contributes a
+scale-independent positive fraction of oscillation density to the family
+ledger, up to finite-overlap and quotient-chain constants.
+\end{proposition}
+
+\begin{proof}
+The old shape ledger is Cauchy--Green/eigenvalue based; spread records support
+separation; renewal records branch identity turnover; and activity records
+source persistence.  None of these sees \(D_tE_j\), \(\nabla E_j\), or the
+projective direction mismatch \(|E_i-E_j|\).  Thus a branch may keep support,
+ancestry, activity, and net shape spectrum while rotating its source direction.
+Equation~\eqref{eq:Phi-osc} integrates exactly the source-weighted density used
+in \eqref{eq:Rosc-family}; finite-overlap normalization converts a heavy
+overlap into a family-level lower bound.
+\end{proof}
+
+\begin{requiredlemma}[Gate K3-A: finite-overlap quotient dichotomy]
+\label{lem:K3-dichotomy}
+For promoted families obeying the finite-overlap bookkeeping, exactly one of
+the following alternatives must be available with constants independent of
+\(r\):
+\[
+\sum_{(i,j):\,i\not\sim_\delta^{\mathrm{final}}j}m_{ij}
+\ge c_m^{\mathrm{final}}\eta P(r),
+\]
+or the family is \((\delta,\eta)\)-quotient-redundant in the sense of
+Definition~\ref{def:quant-final-redundancy}.
+\end{requiredlemma}
+
+\begin{proof}[Required route]
+Build the finite weighted overlap graph whose vertices are promoted packets and
+whose edge weights are \(m_{ij}\).  Collapse the graph along
+\(\sim_\delta^{\mathrm{final}}\).  Finite overlap makes total captured mass
+comparable to \(\eta P(r)\) up to uniform constants.  If the quotient-collapsed
+graph has too little edge mass outside its classes, the captured mass is
+concentrated inside quotient classes and is, by definition, the redundant
+branch.  The contrapositive gives the displayed nonredundant mass lower bound.
+\end{proof}
+
+\begin{requiredlemma}[Gate K3-B: final quantitative quotient-or-charge]
+\label{lem:K3}
+Define
+\begin{equation}
+\label{eq:dphys-final}
+d_{\mathrm{phys}}^{\mathrm{final}}(i,j)
+:=
+\max\{d_{\mathrm{phys}}(i,j),\,w_{\mathrm{osc}}\Phi_{\mathrm{osc}}(i,j)\}.
+\end{equation}
+Let \(\sim_\delta^{\mathrm{final}}\) be generated by significant-overlap pairs
+with \(d_{\mathrm{phys}}^{\mathrm{final}}\le\delta\), and set
+\[
+E_{\mathrm{nonred}}^{\mathrm{final}}
+:=\{(i,j):i\not\sim_\delta^{\mathrm{final}}j,\ m_{ij}>0\}.
+\]
+There are constants \(c_m^{\mathrm{final}}>0\), \(C_*^{\mathrm{final}}>0\),
+and \(\delta>0\) such that, if the promoted family is not quotient-redundant
+and \(R_{\mathrm{pack},\delta}^{*,\mathrm{final}}\ge\eta\), then
+\begin{align}
+\sum_{(i,j)\in E_{\mathrm{nonred}}^{\mathrm{final}}}m_{ij}
+&\ge c_m^{\mathrm{final}}\eta P(r), \label{eq:K3-mass}\\
+\sum_{(i,j)\in E_{\mathrm{nonred}}^{\mathrm{final}}}
+m_{ij}d_{\mathrm{phys}}^{\mathrm{final}}(i,j)
+&\le
+C_*^{\mathrm{final}}P(r)\mathcal F_{\mathrm{phys}}^{\mathrm{final}}(r).
+\label{eq:K3-ledger}
+\end{align}
+Consequently,
+\begin{equation}
+\label{eq:cfinal}
+\mathcal F_{\mathrm{phys}}^{\mathrm{final}}(r)
+\ge c_{\mathrm{final}}(\eta),
+\qquad
+c_{\mathrm{final}}(\eta)
+:=
+\frac{\delta c_m^{\mathrm{final}}}{C_*^{\mathrm{final}}}\eta,
+\end{equation}
+or the family is quantitatively quotient-redundant.
+\end{requiredlemma}
+
+\begin{proof}[Required route]
+Every edge that survives the generated quotient satisfies
+\(d_{\mathrm{phys}}^{\mathrm{final}}\ge\delta\).  If the mass lower bound
+\eqref{eq:K3-mass} failed, Lemma~\ref{lem:K3-dichotomy} routes the family into
+the quantitative quotient-redundant branch.  The old physical coordinates give
+the old ledger-adjoint edge estimate, and
+Proposition~\ref{prop:osc-stabilization} adds the oscillation estimate
+\[
+\sum m_{ij}\Phi_{\mathrm{osc}}(i,j)
+\le C_{\mathrm{osc},*}P(r)R_{\mathrm{osc}}^{\mathrm{fam}}(r)+o_r(1).
+\]
+Since \(d_{\mathrm{phys}}^{\mathrm{final}}\le
+d_{\mathrm{phys}}+w_{\mathrm{osc}}\Phi_{\mathrm{osc}}\), the edge ledger
+\eqref{eq:K3-ledger} follows after enlarging \(C_*^{\mathrm{final}}\).  The
+threshold \(d_{\mathrm{phys}}^{\mathrm{final}}\ge\delta\), the mass bound, and
+\eqref{eq:K3-ledger} imply
+\[
+\delta c_m^{\mathrm{final}}\eta P(r)
+\le C_*^{\mathrm{final}}P(r)\mathcal F_{\mathrm{phys}}^{\mathrm{final}}(r),
+\]
+and cancellation on the nontrivial source sequence gives \eqref{eq:cfinal}.
+\end{proof}
+
+\clearpage
+\section{K4: Forward Absorption}
+\label{sec:K4}
+
+K4 routes the final physical charge into the denominator \(D\).
+
+\begin{lemma}[Old forward source absorption]
+\label{lem:K4-old}
+There is \(C_{\mathrm{old}}<\infty\) such that
+\begin{equation}
+\label{eq:K4-old}
+P(r)\mathcal F_{\mathrm{phys}}(r)
+\le C_{\mathrm{old}}D(r)+o_r(1).
+\end{equation}
+\end{lemma}
+
+\begin{lemma}[Oscillation/twist forward absorption]
+\label{lem:K4-osc}
+There is \(C_{\mathrm{osc}}<\infty\) such that
+\begin{equation}
+\label{eq:K4-osc}
+P(r)R_{\mathrm{osc}}^{\mathrm{fam}}(r)
+\le C_{\mathrm{osc}}D(r)+o_r(1).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Using \eqref{eq:theta-osc} and \eqref{eq:Rosc-family},
+\[
+P R_{\mathrm{osc}}^{\mathrm{fam}}
+\lesssim
+r\iint_{\mathcal U_r}\sigma_+
+\big(r^2|D_tE|+r|\nabla E|\big)\phi^2+o_r(1).
+\]
+The material-direction part is controlled by the transported-director equation:
+\[
+r^2|D_tE|\le C S_r+\mathcal R_{\mathrm{coh},\nu}^{E}.
+\]
+It is therefore bounded by the strain row and the coherent residual row.  For
+spatial twist, on \(\{|\omega|>0\}\),
+\[
+|\nabla E|\le C\frac{|\nabla\omega|}{|\omega|}.
+\]
+Since \(\sigma_+\le |S_{\mathrm{loc}}||\omega|^2\), Young's inequality gives
+\[
+r^2\sigma_+\frac{|\nabla\omega|}{|\omega|}
+\le
+\frac12 r^3\sigma_+|S_{\mathrm{loc}}|
++C r|\nabla\omega|^2.
+\]
+After integration, the first term is \(\mathfrak B_{\mathrm{strain}}\) and the
+second is \(\mathcal E_\omega\).  All absorber rows are components of \(D\).
+\end{proof}
+
+\begin{theorem}[K4-final forward absorption]
+\label{thm:K4}
+For
+\[
+\mathcal F_{\mathrm{phys}}^{\mathrm{final}}
+=\mathcal F_{\mathrm{phys}}+R_{\mathrm{osc}}^{\mathrm{fam}},
+\]
+there is
+\begin{equation}
+\label{eq:Cforw-final}
+C_{\mathrm{forw}}^{\mathrm{final}}
+:=C_{\mathrm{old}}+C_{\mathrm{osc}}
+\end{equation}
+such that
+\begin{equation}
+\label{eq:K4-final}
+P(r)\mathcal F_{\mathrm{phys}}^{\mathrm{final}}(r)
+\le
+C_{\mathrm{forw}}^{\mathrm{final}}D(r)+o_r(1).
+\end{equation}
+Together with K3,
+\begin{equation}
+\label{eq:K4-forward}
+P(r)
+\le
+\frac{C_{\mathrm{forw}}^{\mathrm{final}}}{c_{\mathrm{final}}(\eta)}D(r)
++o_r(1).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Split \(P\mathcal F_{\mathrm{phys}}^{\mathrm{final}}\) into the old physical
+term and \(P R_{\mathrm{osc}}^{\mathrm{fam}}\), then apply
+Lemmas~\ref{lem:K4-old} and~\ref{lem:K4-osc}.  Inequality
+\eqref{eq:K4-forward} follows from \eqref{eq:cfinal}.
+\end{proof}
+
+\clearpage
+\section{K5B: High-Strain Transport Rigidity}
+\label{sec:K5B}
+
+K5B is the main new analytic wall.  Standard deformation-gradient kinematics
+give forward bounds, such as shape growth controlled by accumulated strain.
+The needed direction is reverse: source-weighted high strain must force shape,
+oscillation/twist, renewal, separation, leakage, quotient redundancy, or a
+legitimate \(P\)-term.
+This is the main analytic estimate required for closure.  The gates below
+record the required estimates and constant routes; they are the burden to prove
+rather than a citation-closed theorem already discharged in this note.
+
+\begin{lemma}[K5B-0 interface bridge]
+\label{lem:K5B-interface}
+Let \(W\ge0\) be any K5-admissible source-weighted integrand, including
+\(W=S_r\mathbf 1_{H_\Lambda}\).  For promoted branches with
+core/collar/tail decomposition,
+\[
+\mathcal T_j=\mathcal T_j^{\mathrm{core}}\cup
+\mathcal T_j^{\mathrm{collar}}\cup\mathcal T_j^{\mathrm{tail}},
+\]
+the source-weighted integral splits as
+\[
+r\iint_{\mathcal U_r}\sigma_+W\phi^2
+\le
+\sum_j r\int_{E_j}\int_{I_j}
+\sigma_+W(\eta_{s_j,t}^{(j)}(a),t)\phi^2\,dt\,da
++C_W(\mathcal B_\omega+\mathcal D_{\mathrm{ARR}}
++\mathcal E_\nu^{\mathrm{coh},+})
++o_r(1).
+\]
+\end{lemma}
+
+\begin{proof}
+On each core, incompressibility gives \(\det D\eta_{s_j,t}^{(j)}=1\), so the
+Lagrangian change of variables is exact.  The complement of the core is the
+collar, tail, and coherent-residual set; by definition these pieces are charged
+to the boundary, ARR/tail, and coherent residual rows.  This bridge contains no
+core coercivity; it only separates the interface leakage.
+\end{proof}
+
+\setcounter{requiredlemma}{3}
+\begin{requiredlemma}[Gate K5B-A: Source-weighted core matrix rigidity]
+\label{lem:K5B-path}
+Let \(F\) solve \(\dot F=(\nabla u)(\eta(t),t)F\) on a branch core with
+\(\det F=1\), and let \(E(t)=e(t)\otimes e(t)\) be the source director.  For a
+material label \(a\), define the source-time probability measure
+\[
+d\mu_{j,a}(t)
+:=
+\frac{r\,\sigma_+(\eta_{s_j,t}^{(j)}(a),t)
+\phi^2(\eta_{s_j,t}^{(j)}(a),t)\,dt}
+{P_{j,a}(r)+\varepsilon}.
+\]
+Let
+\[
+A_{j,a}^H
+:=
+\int_{\{S_r>\Lambda\}}
+S_r(\eta_{s_j,t}^{(j)}(a),t)\,d\mu_{j,a}(t).
+\]
+Then there is \(C_{\mathrm{rig}}\) such that
+\begin{equation}
+\label{eq:path-rigidity}
+A_{j,a}^H
+\le
+C_{\mathrm{rig}}\big(
+R_{\mathrm{shape}}^{(j,a)}
++R_{\mathrm{osc}}^{(j,a)}
++1\big)+o_r(1).
+\end{equation}
+\end{requiredlemma}
+
+\begin{proof}[Required route]
+Partition the high-strain time set into intervals on which the projective
+source director varies by at most a fixed small angle.  On a low-variation
+interval, large source-weighted dimensionless strain forces Cauchy--Green
+condition-number production because \(\det F=1\).  Intervals not covered by
+this alternative are charged to projective direction variation.  The finite
+partition cost becomes the \(+1\) term; after branch averaging this is a
+legitimate \(P(r)\) contribution.
+\end{proof}
+
+\begin{requiredlemma}[Gate K5B-B: Coercive branch action]
+\label{lem:K5B-branch}
+Let
+\[
+A_j^H(r,\Lambda)
+:=
+\frac{1}{P_j(r)}
+r\iint_{\{S_r>\Lambda\}\cap\mathcal T_j}
+\sigma_+S_r\phi^2\,dx\,dt .
+\]
+Then
+\begin{equation}
+\label{eq:branch-action}
+A_j^H
+\le
+C_{\mathrm{act}}\big(
+R_{\mathrm{shape}}^{(j)}
++R_{\mathrm{osc}}^{(j)}
++R_{\mathrm{renew}}^{(j)}
++R_{\mathrm{sep}}^{(j)}
++1\big)+o_r(1).
+\end{equation}
+\end{requiredlemma}
+
+\begin{proof}[Required route]
+Use Lemma~\ref{lem:K5B-interface} to split the branch into core and leakage.
+Loss of coherent identity is renewal.  Persistent but physically separating
+branches are separation and then final physical charge.  On the remaining
+nonrenewing, nonseparating core, Lemma~\ref{lem:K5B-path} gives shape or
+oscillation/twist.  The \(+1\) term becomes \(P_j(r)\) after multiplication.
+\end{proof}
+
+\begin{requiredlemma}[Gate K5B-C: High-strain matrix bound]
+\label{lem:K5B-bound}
+Let \(H_\Lambda=\{S_r>\Lambda\}\cap\mathcal U_r\).  Assume K4-final and
+Lemma~\ref{lem:K5B-branch}.  If \(a_{\mathrm{leak}}\) is the coefficient with
+which K5B-0 leakage rows enter \(D\), then
+\begin{equation}
+\label{eq:K5B-bound}
+r\iint_{H_\Lambda}\sigma_+S_r\phi^2
+\le
+a_HD(r)+C_HP(r)+o_r(1),
+\qquad
+a_H:=a_{\mathrm{leak}}+C_{\mathrm{act}}C_{\mathrm{forw}}^{\mathrm{final}}.
+\end{equation}
+No arbitrary smallness of \(a_H\) is asserted.
+\end{requiredlemma}
+
+\begin{proof}[Required route]
+Multiply \eqref{eq:branch-action} by \(P_j(r)\), sum in \(j\), and use that
+shape, oscillation, renewal, and separation are components of
+\(\mathcal F_{\mathrm{phys}}^{\mathrm{final}}\).  K4-final routes their product
+with \(P(r)\) into \(D(r)\).  Leakage contributes \(a_{\mathrm{leak}}D(r)\),
+and the summed \(+1\) terms contribute \(C_HP(r)\).
+\end{proof}
+
+\begin{lemma}[Matrix-ready strain row]
+\label{lem:strain-row}
+The strain row satisfies
+\begin{equation}
+\label{eq:strain-linear}
+\mathfrak B_{\mathrm{strain}}(r)
+\le
+a_{\mathrm{strain}}D(r)+C_{\mathrm{strain}}P(r)+o_r(1),
+\qquad
+a_{\mathrm{strain}}:=a_H,\quad
+C_{\mathrm{strain}}:=\Lambda+C_H.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Split \(\mathfrak B_{\mathrm{strain}}\) into \(\{S_r\le\Lambda\}\) and
+\(H_\Lambda\).  The low-strain part is at most \(\Lambda P(r)\); the high-strain
+part is Lemma~\ref{lem:K5B-bound}.
+\end{proof}
+
+\begin{remark}[Forbidden inference]
+The kinematic estimate
+\[
+\frac{d}{dt}\log\kappa_j(t)\le C|S_{\mathrm{loc}}|
+\]
+does not imply
+\[
+\int |S_{\mathrm{loc}}|\,dt\lesssim \log\kappa_j .
+\]
+Large accumulated strain must instead be routed to shape, oscillation/twist,
+renewal, separation, leakage, quotient redundancy, or \(P\).  Without the
+oscillation/twist channel, K5B is incomplete.
+\end{remark}
+
+\clearpage
+\section{K5: Reverse Matrix Absorption}
+\label{sec:K5}
+
+K5 packages all reverse row estimates into a nonnegative matrix inequality.
+Use the row order in \eqref{eq:X-def}.  The required row form is:
+\begin{align}
+\mathcal E_\omega
+&\le
+a_{12}\mathcal B_\omega
++a_{13}\mathcal D_{\mathrm{ARR}}
++a_{14}\mathfrak B_{\mathrm{strain}}
++a_{16}\mathcal E_\nu^{\mathrm{coh},+}
++b_1P+o_r(1), \label{eq:row1}\\
+\mathcal B_\omega
+&\le
+a_{21}\mathcal E_\omega
++a_{23}\mathcal D_{\mathrm{ARR}}
++a_{26}\mathcal E_\nu^{\mathrm{coh},+}
++b_2P+o_r(1), \label{eq:row2}\\
+\mathcal D_{\mathrm{ARR}}
+&\le
+a_{31}\mathcal E_\omega
++a_{32}\mathcal B_\omega
++a_{36}\mathcal E_\nu^{\mathrm{coh},+}
++b_3P+o_r(1), \label{eq:row3}\\
+\mathfrak B_{\mathrm{strain}}
+&\le
+a_{\mathrm{strain}}\mathbf 1^TX
++C_{\mathrm{strain}}P+o_r(1), \label{eq:row4}\\
+M_{\mathrm{deact}}
+&\le
+a_{51}\mathcal E_\omega
++a_{52}\mathcal B_\omega
++a_{53}\mathcal D_{\mathrm{ARR}}
++a_{54}\mathfrak B_{\mathrm{strain}}
++a_{55}M_{\mathrm{deact}}
++a_{56}\mathcal E_\nu^{\mathrm{coh},+}
++b_5P+o_r(1), \label{eq:row5}\\
+\mathcal E_\nu^{\mathrm{coh},+}
+&\le
+a_{61}\mathcal E_\omega
++a_{62}\mathcal B_\omega
++a_{63}\mathcal D_{\mathrm{ARR}}
++b_6P+o_r(1). \label{eq:row6}
+\end{align}
+
+Equivalently,
+\begin{equation}
+\label{eq:AXb}
+X(r)\le A X(r)+bP(r)+o_r(1),
+\end{equation}
+where
+\[
+A=
+\begin{pmatrix}
+0&a_{12}&a_{13}&a_{14}&0&a_{16}\\
+a_{21}&0&a_{23}&0&0&a_{26}\\
+a_{31}&a_{32}&0&0&0&a_{36}\\
+a_{\mathrm{strain}}&a_{\mathrm{strain}}&a_{\mathrm{strain}}
+&a_{\mathrm{strain}}&a_{\mathrm{strain}}&a_{\mathrm{strain}}\\
+a_{51}&a_{52}&a_{53}&a_{54}&a_{55}&a_{56}\\
+a_{61}&a_{62}&a_{63}&0&0&0
+\end{pmatrix},
+\qquad
+b=
+\begin{pmatrix}
+b_1\\ b_2\\ b_3\\ C_{\mathrm{strain}}\\ b_5\\ b_6
+\end{pmatrix}.
+\]
+
+\begin{theorem}[Matrix-ready reverse absorption]
+\label{thm:K5}
+Assume the row estimates \eqref{eq:row1}--\eqref{eq:row6} and
+\[
+\rho(A)<1.
+\]
+Then
+\begin{equation}
+\label{eq:reverse}
+D(r)\le C_0P(r)+o_r(1),
+\qquad
+C_0:=\mathbf 1^T(I-A)^{-1}b.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Since \(A\ge0\) and \(\rho(A)<1\), the Neumann series
+\((I-A)^{-1}=\sum_{k\ge0}A^k\) converges and is nonnegative.  Applying it
+componentwise to \eqref{eq:AXb} gives
+\[
+X(r)\le (I-A)^{-1}bP(r)+o_r(1).
+\]
+Multiplying by \(\mathbf 1^T\) gives \eqref{eq:reverse}.
+\end{proof}
+
+For certification without explicitly inverting \(I-A\), let \(w_i>0\) and set
+\[
+q_A(w):=\max_i\frac{1}{w_i}\sum_j A_{ij}w_j.
+\]
+Equivalently, the six weighted row sums are the row fractions of \(A\) in the
+weighted sup norm.  Define
+\begin{equation}
+\label{eq:C0-cert}
+C_0^{\mathrm{cert}}(w)
+:=
+\frac{
+(\sum_iw_i)\max_i(b_i/w_i)
+}{
+1-q_A(w)
+}.
+\end{equation}
+
+\begin{lemma}[Weighted row-sum certificate]
+\label{lem:weighted-certificate}
+If \(q_A(w)<1\), then \(\rho(A)\le q_A(w)<1\), and
+\[
+\mathbf 1^T(I-A)^{-1}b\le C_0^{\mathrm{cert}}(w).
+\]
+\end{lemma}
+
+\begin{proof}
+Use the weighted sup norm \(\|y\|_w=\max_i |y_i|/w_i\).  The operator norm of
+\(A\) in this norm is \(q_A(w)\), so \(\rho(A)\le q_A(w)\).  If
+\(\beta_w:=\max_i(b_i/w_i)\), then \((A^kb)_i\le \beta_w q_A(w)^kw_i\).
+Summing over rows and \(k\ge0\) gives \eqref{eq:C0-cert}.
+\end{proof}
+
+\begin{remark}[Coefficient audit]
+Every coefficient in \(A\) must come from a row proof.  In particular, the
+strain row contributes
+\[
+A_{4j}=a_{\mathrm{strain}}\quad(1\le j\le6),
+\]
+so K5B constants directly affect the feasibility of \(q_A(w)<1\).  K5 does not
+permit unproved smallness assumptions.
+\end{remark}
+
+\clearpage
+\section{K6: Spectral and Loop-Gap Certification}
+\label{sec:K6}
+
+K6 contains no PDE estimate.  It is the strict algebraic loop that combines K3,
+K4, and K5.
+
+\begin{theorem}[Absorption loop algebra]
+\label{thm:K6}
+Assume
+\begin{equation}
+\label{eq:loop-forward}
+P(r)\le
+\frac{C_{\mathrm{forw}}^{\mathrm{final}}}{c_{\mathrm{final}}(\eta)}
+D(r)+o_r(1),
+\end{equation}
+\begin{equation}
+\label{eq:loop-reverse}
+D(r)\le C_0P(r)+o_r(1),
+\end{equation}
+and the strict gap
+\begin{equation}
+\label{eq:loop-gap}
+C_{\mathrm{forw}}^{\mathrm{final}}C_0<c_{\mathrm{final}}(\eta).
+\end{equation}
+Then along the contradiction sequence,
+\[
+P(r_n)\to0,\qquad D(r_n)\to0.
+\]
+\end{theorem}
+
+\begin{proof}
+Let
+\[
+q:=\frac{C_{\mathrm{forw}}^{\mathrm{final}}C_0}
+{c_{\mathrm{final}}(\eta)}<1.
+\]
+Combining \eqref{eq:loop-forward} and \eqref{eq:loop-reverse} gives
+\[
+D(r_n)\le qD(r_n)+o_n(1),
+\]
+and hence \(D(r_n)\to0\).  Then \eqref{eq:loop-forward} gives
+\(P(r_n)\to0\).
+\end{proof}
+
+\begin{corollary}[Certified loop-gap condition]
+\label{cor:cert-loop}
+If \(q_A(w)<1\) and
+\begin{equation}
+\label{eq:cert-loop-gap}
+C_{\mathrm{forw}}^{\mathrm{final}}C_0^{\mathrm{cert}}(w)
+<
+c_{\mathrm{final}}(\eta),
+\end{equation}
+then the K6 loop closes with the certified reverse constant
+\(C_0^{\mathrm{cert}}(w)\).
+\end{corollary}
+
+\begin{proof}
+Lemma~\ref{lem:weighted-certificate} supplies
+\[
+D(r)\le C_0^{\mathrm{cert}}(w)P(r)+o_r(1).
+\]
+Condition \eqref{eq:cert-loop-gap} is exactly the strict K6 gap using this
+certified reverse constant.
+\end{proof}
+
+The single constant inequality to verify is therefore
+\begin{equation}
+\label{eq:single-ledger}
+C_{\mathrm{forw}}^{\mathrm{final}}\mathbf 1^T(I-A)^{-1}b
+<
+\frac{\delta c_m^{\mathrm{final}}}{C_*^{\mathrm{final}}}\eta.
+\end{equation}
+The checkable sufficient version is
+\[
+q_A(w)<1,
+\qquad
+C_{\mathrm{forw}}^{\mathrm{final}}C_0^{\mathrm{cert}}(w)
+<
+c_{\mathrm{final}}(\eta).
+\]
+No qualitative positivity statement can replace this strict gap.
+
+\clearpage
+\section{K7: Compatibility and Regularity Bridge}
+\label{sec:K7}
+
+K7 is standard regularity theory in the exact denominator normalization used by
+the ledger.  Its burden is compatibility: every edit to \(D\) must still imply
+smallness of the packages used below.
+
+\begin{definition}[K7 local packages]
+\label{def:K7-packages}
+Let \(\phi\in C_c^\infty(B_{2r})\) satisfy \(\phi\equiv1\) on \(B_r\), and set
+\[
+A_\omega(2r)
+:=
+2r\,\operatorname*{ess\,sup}_{t\in(T-(2r)^2,T)}
+\int_{B_{2r}}|\omega|^2\phi^2\,dx,
+\]
+\[
+B_\omega^{\mathrm{diss}}(2r)
+:=
+\nu\,2r\iint_{Q_{2r}}|\nabla\omega|^2\phi^2\,dx\,dt,
+\]
+\[
+K_{\omega,3}^{\mathrm{crit}}(r;z_0)
+:=
+r\iint_{Q_r(z_0)}|\omega|^3\,dx\,dt.
+\]
+The compatibility condition is
+\begin{equation}
+\label{eq:K7-compat}
+A_\omega(2r)+B_\omega^{\mathrm{diss}}(2r)
+\le CD(r)+o_r(1),
+\qquad
+\mathcal H_u(r)+\mathcal H_p(r)+\mathcal R_\phi(r)
+\le CD(r)+o_r(1),
+\end{equation}
+where \(\mathcal H_u,\mathcal H_p\) are local harmonic/projection remainders
+and \(\mathcal R_\phi\) is the cutoff remainder.
+\end{definition}
+
+\begin{lemma}[Vorticity interpolation]
+\label{lem:vort-interp}
+There is \(C\) such that
+\begin{equation}
+\label{eq:vort-interp}
+K_{\omega,3}^{\mathrm{crit}}(r;z_0)
+\le
+C\nu^{-3/4}
+A_\omega(2r)^{3/4}B_\omega^{\mathrm{diss}}(2r)^{3/4}
++\mathcal R_\phi(r).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+This is the scale-correct local Gagliardo--Nirenberg estimate applied to
+\(\omega\phi\), integrated over a parabolic interval and multiplied by \(r\).
+\end{proof}
+
+\begin{lemma}[Mean-subtracted velocity and pressure control]
+\label{lem:velocity-pressure}
+The standard local div--curl/Biot--Savart and pressure decomposition estimates
+give
+\[
+r^{-2}\iint_{Q_r}|u-\bar u_{B_r}(t)|^3
+\le
+C K_{\omega,3}^{\mathrm{crit}}(2r;z_0)+\mathcal H_u(r),
+\]
+and
+\[
+r^{-2}\iint_{Q_r}|p-\bar p_{B_r}(t)|^{3/2}
+\le
+C r^{-2}\iint_{Q_{2r}}|u-\bar u_{B_{2r}}(t)|^3+\mathcal H_p(r).
+\]
+\end{lemma}
+
+\begin{proof}
+Subtracting the ball mean fixes the local Galilean gauge.  The localized
+Biot--Savart piece is controlled by the \(L^3\) vorticity norm; the harmonic
+velocity remainder is \(\mathcal H_u\).  For pressure, write
+\(-\Delta p_{\mathrm{loc}}
+=\partial_i\partial_j[(u_i-\bar u_i)(u_j-\bar u_j)]\) on a localized ball and
+apply Calderon--Zygmund estimates.  The harmonic pressure remainder is
+\(\mathcal H_p\).
+\end{proof}
+
+\begin{lemma}[Mean-subtracted CKN epsilon criterion]
+\label{lem:CKN}
+There exists \(\varepsilon_{\mathrm{CKN}}>0\) such that
+\[
+\mathcal K_{\mathrm{CKN}}^{\mathrm{ms}}(r;z_0)<\varepsilon_{\mathrm{CKN}}
+\]
+implies that \(z_0\) is regular.
+\end{lemma}
+
+\begin{theorem}[K7 regularity bridge]
+\label{thm:K7}
+Assume \eqref{eq:K7-compat}.  If \(D(r_n)\to0\) along \(r_n\downarrow0\), then
+\[
+\mathcal K_{\mathrm{CKN}}^{\mathrm{ms}}(r_n;z_0)\to0.
+\]
+Consequently \(z_0\) is regular.
+\end{theorem}
+
+\begin{proof}
+Compatibility makes the localized vorticity energy-dissipation package and all
+harmless remainders vanish.  Lemma~\ref{lem:vort-interp} gives
+\(K_{\omega,3}^{\mathrm{crit}}(2r_n;z_0)\to0\).  Lemma~\ref{lem:velocity-pressure}
+then gives mean-subtracted velocity and pressure smallness, so
+\(\mathcal K_{\mathrm{CKN}}^{\mathrm{ms}}(r_n;z_0)\to0\).  Apply
+Lemma~\ref{lem:CKN}.
+\end{proof}
+
+\clearpage
+\section{Contradiction Chain}
+\label{sec:chain}
+
+\begin{theorem}[Conditional K3--K7 closure]
+\label{thm:closure}
+Assume the upstream promoted-source package, K3, K4, K5/K5B, K6, and K7 in the
+forms stated above.  If the strict loop gap \eqref{eq:loop-gap} holds, then the
+candidate point \(z_0\) is regular.
+\end{theorem}
+
+\begin{proof}
+If the promoted family is quotient-redundant, it is not a nonredundant
+amplification channel.  Otherwise K3 gives
+\[
+\mathcal F_{\mathrm{phys}}^{\mathrm{final}}\ge c_{\mathrm{final}}(\eta).
+\]
+K4 gives
+\[
+P\le
+\frac{C_{\mathrm{forw}}^{\mathrm{final}}}{c_{\mathrm{final}}(\eta)}D+o.
+\]
+K5 gives \(D\le C_0P+o\), with either
+\[
+C_0=\mathbf 1^T(I-A)^{-1}b
+\]
+or a certified sufficient constant \(C_0^{\mathrm{cert}}(w)\).  K6 and the
+strict gap force \(P(r_n)\to0\) and \(D(r_n)\to0\).  K7 then converts
+\(D(r_n)\to0\) into CKN smallness and regularity, contradicting singularity.
+\end{proof}
+
+\clearpage
+\section{Falsification and Attack Surface}
+\label{sec:attack-surface}
+
+This note is useful only if it makes the failure modes visible.  A critic can
+break the K3--K7 closure by showing any one of the following:
+\begin{enumerate}
+\item A nonredundant promoted source sequence with positive \(P(r_n)\) and no
+final physical payment.
+\item High source-weighted strain that avoids shape, oscillation/twist,
+renewal, separation, leakage, quotient redundancy, and a legitimate \(P\)-term.
+\item A K5 matrix whose proved coefficients cannot satisfy
+\(\rho(A)<1\), or cannot satisfy a certified weighted row condition
+\(q_A(w)<1\).
+\item A failure of the strict K6 loop gap
+\[
+C_{\mathrm{forw}}^{\mathrm{final}}C_0<c_{\mathrm{final}}(\eta).
+\]
+\item A denominator \(D\) that collapses without implying mean-subtracted CKN
+smallness.
+\end{enumerate}
+These are the attack points; if one survives, the proposed closure survives
+only as a conditional ledger, not as a completed regularity proof.
+
+\clearpage
+\section{Proof-Burden Ledger}
+\label{sec:burden}
+
+\begin{longtable}{@{}p{0.12\linewidth}p{0.34\linewidth}p{0.42\linewidth}@{}}
+\toprule
+\textbf{Gate} & \textbf{Claim} & \textbf{Remaining burden} \\
+\midrule
+\endhead
+K3 &
+Nonredundant promoted packing either quotient-collapses or yields
+\(\mathcal F_{\mathrm{phys}}^{\mathrm{final}}\ge c_{\mathrm{final}}(\eta)\). &
+Graph quotient constants, finite-overlap mass transfer, final physical
+coordinate thresholds, and the oscillation-adjoint estimate. \\
+\addlinespace
+K4 &
+\(P\mathcal F_{\mathrm{phys}}^{\mathrm{final}}\le
+C_{\mathrm{forw}}^{\mathrm{final}}D+o\). &
+Forward routing of all physical ledgers, especially \(R_{\mathrm{osc}}^{\mathrm{fam}}\),
+into the chosen denominator rows with scale-independent constants. \\
+\addlinespace
+K5B &
+Source-weighted high strain routes to shape, oscillation, renewal, separation,
+leakage, quotient redundancy, or \(P\). &
+The reverse high-strain rigidity estimate
+\eqref{eq:K5B-bound}; no substitution of an unweighted path diagnostic for the
+source-weighted action. \\
+\addlinespace
+K5 &
+The six denominator rows satisfy \(X\le AX+bP+o\), and \(\rho(A)<1\). &
+Row-by-row coefficient provenance, packed boundary constants, ARR/tail routing,
+deactivation and coherent-residual constants, and a spectral certificate such
+as \(q_A(w)<1\). \\
+\addlinespace
+K6 &
+The constants satisfy
+\(C_{\mathrm{forw}}^{\mathrm{final}}C_0<c_{\mathrm{final}}(\eta)\). &
+Strict numerical loop gap; positivity of \(c_{\mathrm{final}}(\eta)\) alone is
+not enough. \\
+\addlinespace
+K7 &
+\(D(r_n)\to0\) implies mean-subtracted CKN smallness. &
+Compatibility of the exact denominator rows with local vorticity
+energy-dissipation, harmless cutoff/projection remainders, and the
+mean-subtracted CKN normalization. \\
+\bottomrule
+\end{longtable}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This trimmed note is the public technical burden behind the imported gates in
+the amplification-payment paper.  The proof is not reduced to one inequality
+until every row coefficient in K5 is proved, the K5B high-strain transport wall
+is crossed, and K6 verifies the strict constant gap.  K7 is standard in spirit,
+but it remains coupled to the exact denominator normalization: edits to the
+ledger must preserve \eqref{eq:K7-compat}.
+
+\end{document}

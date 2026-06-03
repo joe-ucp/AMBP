@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this public lab or its derived artifacts, please cite it and the Johns Hopkins Turbulence Databases attribution in NOTICE.md."
+title: "Amplification Must Be Paid: Public Lab"
+authors:
+  - family-names: "Roy"
+    given-names: "Joseph"
+date-released: "2026-06-02"
+version: "0.1.0"
+license: "MIT"
+abstract: "Runnable companion package for a conditional source-ledger framework for Navier-Stokes amplification-payment checks, including a paper, notebook, smoke tests, and curated JHTDB-derived summary artifacts."

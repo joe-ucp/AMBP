@@ -1,0 +1,15 @@
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+
+*.aux
+*.log
+*.out
+*.synctex.gz
+
+data/full_jhtdb/
+data/raw/
+data/tmp/
+
+outputs/*
+!outputs/.gitkeep

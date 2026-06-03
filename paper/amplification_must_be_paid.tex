@@ -1,0 +1,836 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs,array,longtable}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{3em}
+
+\newtheorem{principle}{Principle}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+
+\title{Amplification Must Be Paid:\\
+A Conditional Source-Ledger Framework for Navier--Stokes}
+\author{Joseph Roy}
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+I propose a scale-critical accounting principle for three-dimensional
+Navier--Stokes dynamics: persistent amplification must be paid by an
+identifiable channel.  The guiding intuition is that constraints are not
+created or destroyed by a blowup scenario; they are redistributed among
+source, flux, strain, renewal, quotient, separation, and residual channels.
+The proposed ledger tries to make that redistribution visible.
+
+The framework is built around the positive vortex-stretching density
+\(\sigma_+=(\omega\cdot S\omega)_+\) and a scale-critical denominator ledger
+\(D(r)=\mathbf 1^T X(r)\).  The source ledger is formulated under a local
+source-finiteness or truncation hypothesis,
+\[
+P(r_0)=r_0\iint_{Q_{r_0}(z_0)}\sigma_+\,dx\,dt<\infty,
+\]
+which is automatic in smooth pre-singular regions but is not automatic in the
+bare Leray--Hopf energy class.
+
+This manuscript does not claim a complete proof of Navier--Stokes regularity.
+It gives a stand-alone statement of the amplification-payment program, defines
+the live ledger rows, records partial closure mechanisms, states the conditional
+regularity theorem with its constant gap, reports adversarial numerical tests
+only as mechanism tests, and lists the remaining theorem gates.
+\end{abstract}
+
+\clearpage
+\section{Introduction}
+\label{sec:introduction}
+
+The Navier--Stokes equations have conservation and dissipation structures, but
+possible singularity formation is a problem of amplification.  The guiding idea
+of this manuscript is that amplification should not be free.  If vorticity,
+strain, boundary flux, annular leakage, or coherent residuals persist at a
+scale-critical level, then the dynamics should generate a visible payment in a
+finite ledger.
+
+The proposed law is not a new PDE.  It is a derived accounting principle:
+\[
+\boxed{\text{amplification must be paid}.}
+\]
+This paper is designed to stand alone as the mechanism paper: it defines the
+ledger, states what is proved conditionally, explains what has been tested, and
+makes the remaining proof gates explicit.  The downstream technical gates K3
+through K7 are isolated in the companion note
+\texttt{technical\_gates\_k3\_k7.pdf}.
+
+\clearpage
+\section{The Proposed Law}
+\label{sec:law}
+
+The intuition behind the proposed law is simple: constraints cannot be created
+or destroyed for free; they can only be redistributed.  If this intuition is
+right, then a Navier--Stokes growth scenario cannot create persistent
+scale-critical amplification without sending the cost somewhere visible.  The
+ledger below is one way to make that intuition falsifiable: amplification must
+route to source, boundary, tail, renewal, quotient redundancy, separation,
+coherent residual, or an explicitly unresolved row.
+
+\begin{principle}[Amplification payment principle]
+\label{prin:payment}
+Persistent scale-critical amplification in three-dimensional incompressible
+Navier--Stokes should generate an identifiable payment channel.  In the
+source-ledger formulation, this takes the schematic form
+\begin{equation}
+\label{eq:payment-schematic}
+\mathrm{Amplification}(r)\le \mathrm{Payment}(r)+o_r(1),
+\end{equation}
+where \(\mathrm{Payment}(r)\) is a finite ledger of source, boundary, tail,
+strain, renewal, quotient, separation, and residual charges.  In the
+source-ledger formulation below, the amplification and payment terms are
+represented through \(P(r)\), \(D(r)\), and the final physical ledger.
+\end{principle}
+
+\begin{remark}[Conjectural status]
+\label{rem:conjectural-status}
+Principle~\ref{prin:payment} is a conjectural organizing law.  The paper does
+not assert \eqref{eq:payment-schematic} as an unconditional theorem.  The
+conditional theorem in Section~\ref{sec:conditional-theorem} states exactly
+which remaining gates would turn the law into a regularity contradiction.
+\end{remark}
+
+Throughout, \(o_r(1)\) denotes a quantity tending to zero as \(r\downarrow0\)
+along the stated sequence of scales, with all fixed ledger parameters held
+constant.  When the proof uses selected scales \(r_n\downarrow0\), I also
+write \(o_n(1)\).
+
+\subsection*{Standalone versus technical-ledger dependencies}
+
+This manuscript is designed to be readable without the full technical ledger,
+but it does not make every ledger estimate self-contained.  It proves or
+records the following ingredients:
+\begin{enumerate}
+\item the conditional amplification-payment closure theorem;
+\item the source-doubling scale-selection lemma;
+\item fixed-dilation and bounded-macroscopic-parent tail payment;
+\item the empirical attack summaries as mechanism tests.
+\end{enumerate}
+It imports the following technical-ledger inputs:
+\begin{enumerate}
+\item denominator-to-CKN compatibility;
+\item K3 quotient-or-charge for the final physical ledger;
+\item K4 forward absorption of the final physical ledger;
+\item K5 reverse matrix constants, including packed boundary-row constants;
+\item K5B high-strain transport rigidity;
+\item K6 spectral-radius and loop-gap certification.
+\end{enumerate}
+Thus the paper should be read as a conditional program note: it isolates the
+finite list of theorem gates rather than claiming that all gates are already
+proved here.
+
+\clearpage
+\section{Source Ledger and Denominator}
+\label{sec:denominator}
+
+Fix a candidate point \(z_0=(x_0,T)\) and set
+\[
+Q_r(z_0):=B_r(x_0)\times(T-r^2,T).
+\]
+Let \(S=(\nabla u+\nabla u^T)/2\), \(\omega=\nabla\times u\), and
+\[
+\sigma_+:=(\omega\cdot S\omega)_+.
+\]
+The source ledger is
+\begin{equation}
+\label{eq:P-def}
+P(r):=r\iint_{Q_r(z_0)}\sigma_+\,dx\,dt.
+\end{equation}
+
+\begin{remark}[Source-finiteness input]
+\label{rem:source-finiteness}
+For fixed parent cylinders used in the ledger, I assume or import
+\[
+P(r_0)=r_0\iint_{Q_{r_0}(z_0)}\sigma_+\,dx\,dt<\infty.
+\]
+In smooth pre-singular regions this follows from local smoothness.  For
+suitable weak solutions it is a serious additional source-ledger hypothesis,
+or else it must be replaced by a truncation/renormalization version of the
+framework.
+\end{remark}
+
+Let \(\phi_r\) be a standard nonnegative cutoff adapted to \(Q_{2r}(z_0)\),
+equal to one on \(Q_r(z_0)\), with
+\[
+|\nabla\phi_r|\lesssim r^{-1},\qquad
+|\partial_t\phi_r|+\nu|\Delta\phi_r|\lesssim r^{-2}.
+\]
+The live denominator is
+\begin{equation}
+\label{eq:D-def}
+D(r):=\mathbf 1^T X(r),
+\qquad
+X(r):=
+\begin{pmatrix}
+\mathcal E_\omega(r)\\
+\mathcal B_\omega(r)\\
+\mathcal D_{\mathrm{ARR}}(r)\\
+\mathfrak B_{\mathrm{strain}}(r)\\
+M_{\mathrm{deact}}(r)\\
+\mathcal E_\nu^{\mathrm{coh},+}(r)
+\end{pmatrix}.
+\end{equation}
+All rows of \(D(r)\) are required to be nonnegative, scale-critical, and stable
+under the scale subsequences used in Theorem~\ref{thm:conditional-closure}.  The
+normalizations used here are the following.
+
+\begin{enumerate}
+\item \textbf{Vorticity energy/dissipation.}
+\[
+\begin{aligned}
+\mathcal E_\omega(r)
+&:= r\operatorname*{ess\,sup}_{t\in(T-4r^2,T)}
+      \int_{B_{2r}}|\omega|^2\phi_r^2\,dx \\
+&\quad+\nu r\iint_{Q_{2r}}|\nabla\omega|^2\phi_r^2\,dx\,dt .
+\end{aligned}
+\]
+
+\item \textbf{Boundary/collar flux.}
+\[
+\mathcal B_\omega(r)
+:=\mathcal B_\omega^{\mathrm{sh}}(r)
+  +\mathcal B_{\omega,\lambda_0}^{\mathrm{pack}}(2r),
+\]
+where
+\[
+\mathcal B_\omega^{\mathrm{sh}}(r)
+:=r\iint_{Q_{2r}\setminus Q_r}
+|\omega|^2\Theta_{\phi_r}\,dx\,dt
+\]
+and
+\[
+\Theta_{\phi_r}
+:=|\partial_t\phi_r|+\nu|\Delta\phi_r|
+  +|u-\bar u_{B_{2r}}(t)|\,|\nabla\phi_r|.
+\]
+
+\item \textbf{Annular renewal/tail reservoir.}
+\[
+\mathcal D_{\mathrm{ARR}}(r)
+:=S_{\mathrm{ARR}}^{\mathrm{tail}}(r)+o_r(1),
+\]
+with
+\[
+S_{\mathrm{ARR}}^{\mathrm{tail}}(r)
+:=\sum_{k\ge0}2^{-k}\,2^{k+1}r
+\iint_{\mathcal A_k(r)}
+\sigma_+\chi_k^{\mathrm{tail}}\,dx\,dt .
+\]
+Here
+\[
+\mathcal A_k(r)
+:=Q_{2^{k+1}r}(z_0)\setminus Q_{2^kr}(z_0)
+\]
+inside the chosen parent cylinder.
+
+\item \textbf{Source-weighted strain demand.}
+\[
+\mathfrak B_{\mathrm{strain}}(r)
+:=r\iint_{\mathcal U_r}\sigma_+S_r\phi_r^2\,dx\,dt,
+\qquad
+S_r:=r^2|S_{\mathrm{loc}}|.
+\]
+The raw term \(r\iint\sigma_+|S_{\mathrm{loc}}|\phi_r^2\) is excluded as
+supercritical.
+
+\item \textbf{Source deactivation.}
+\[
+M_{\mathrm{deact}}(r)
+:=r\iint_{\cup_j\mathcal T_{r,j}\cap Q_r}
+\sigma_+\mathbf 1_{\mathrm{deact}}\phi_r^2\,dx\,dt+o_r(1),
+\]
+where \(\mathbf 1_{\mathrm{deact}}\) marks promoted source that fails the
+persistence/deactivation test.
+
+\item \textbf{Coherent viscous residual.}
+\[
+\mathcal E_\nu^{\mathrm{coh},+}(r)
+:=r\iint_{Q_{2r}}\mathcal R_{\nu,\mathrm{coh}}^+\,dx\,dt.
+\]
+This is the positive coherent part of the viscous/projection residual left by
+the localized vorticity ledger after source, boundary, and tail rows are
+separated.
+\end{enumerate}
+
+\subsection*{Technical-ledger symbols}
+
+The following symbols are not new proof inputs in this paper; they are the
+named placeholders used by the technical ledger.
+\begin{itemize}
+\item \(S_{\mathrm{loc}}\) is the locally normalized strain tensor used in the
+source-weighted strain row, after subtracting the harmless large-scale or
+harmonic component fixed by the cutoff convention.
+\item \(\mathcal T_{r,j}\) are promoted finite-thickness source tubes generated
+by the primary-source promotion theorem.
+\item \(\chi_k^{\mathrm{tail}}\) is the tail-membership cutoff assigning
+promoted source mass in the \(k\)-th annular parent shell to the ARR row.
+\item \(\mathbf 1_{\mathrm{deact}}\) marks promoted source packets that fail the
+persistence/renewal test and are therefore routed to \(M_{\mathrm{deact}}\).
+\item \(\mathcal R_{\nu,\mathrm{coh}}^+\) is the positive coherent part of the
+viscous/projection residual after source, boundary, tail, and strain terms have
+been separated in the localized vorticity ledger.
+\item Quotient redundancy means that overlapping promoted packets are
+identified by chains of significant-overlap pairs whose final physical distance
+is at most the quotient threshold \(\delta\).
+\end{itemize}
+The companion technical ledger must provide exact constructions and constants
+for these objects.  This paper records where each object enters the conditional
+closure.
+
+The packed boundary contribution is
+\begin{equation}
+\label{eq:packed-boundary}
+\mathcal B_{\omega,\lambda_0}^{\mathrm{pack}}(R)
+:=
+\sup_{\substack{0<a<b\\ \lambda_0 b\le R}}
+\int_a^b
+\mathcal B_{\omega}^{\mathrm{adv}}(s,\lambda_0)
+\frac{ds}{s},
+\end{equation}
+where
+\[
+\mathcal B_{\omega}^{\mathrm{adv}}(s,\lambda_0)
+:=
+s\iint_{Q_{\lambda_0s}\setminus Q_s}
+|u-\bar u_{B_{\lambda_0s}}(t)|\,|\omega|^2\,
+|\nabla\phi_{s,\lambda_0}|\phi_{s,\lambda_0}\,dx\,dt.
+\]
+This packed row is essential for the good-scale null-source result; replacing
+it by a single shell reopens the boundary contraction problem.
+
+\clearpage
+\section{Physical Charges and Quotient Ledger}
+\label{sec:physical-ledger}
+
+The final physical ledger is schematically
+\begin{equation}
+\label{eq:Fphys-final}
+\mathcal F_{\mathrm{phys}}^{\mathrm{final}}
+:=
+\mathcal F_{\mathrm{phys}}
++R_{\mathrm{osc}}^{\mathrm{fam}},
+\end{equation}
+where \(\mathcal F_{\mathrm{phys}}\) includes source-weighted shape,
+renewal, spread/separation, activity, boundary, tail, and coherent-residual
+coordinates.  The oscillation/twist coordinate is explicit because large
+accumulated strain need not imply large net shape growth.
+
+For promoted branches \(i,j\), the final physical distance has the form
+\begin{equation}
+\label{eq:dphys-final}
+d_{\mathrm{phys}}^{\mathrm{final}}(i,j)
+:=
+\max\{d_{\mathrm{phys}}(i,j),w_{\mathrm{osc}}\Phi_{\mathrm{osc}}(i,j)\}.
+\end{equation}
+The quotient relation \(i\sim_\delta j\) identifies branches connected by
+significant-overlap chains with
+\[
+d_{\mathrm{phys}}^{\mathrm{final}}\le\delta.
+\]
+The nonredundant edge set is
+\[
+E_{\mathrm{nonred}}^{\mathrm{final}}
+:=\{(i,j):i\not\sim_\delta j,\ m_{ij}>0\},
+\]
+where \(m_{ij}\) is the source-overlap edge mass.  The K3 target is
+\begin{align}
+\label{eq:K3-target-standalone}
+\sum_{(i,j)\in E_{\mathrm{nonred}}^{\mathrm{final}}}m_{ij}
+&\ge c_m^{\mathrm{final}}\eta P(r),\\
+\sum_{(i,j)\in E_{\mathrm{nonred}}^{\mathrm{final}}}
+m_{ij}d_{\mathrm{phys}}^{\mathrm{final}}(i,j)
+&\le C_*^{\mathrm{final}}P(r)
+\mathcal F_{\mathrm{phys}}^{\mathrm{final}}(r).
+\end{align}
+Together these imply
+\begin{equation}
+\label{eq:cfinal-def}
+\mathcal F_{\mathrm{phys}}^{\mathrm{final}}(r)
+\ge
+c_{\mathrm{final}}(\eta),
+\qquad
+c_{\mathrm{final}}(\eta):=
+\frac{\delta c_m^{\mathrm{final}}}{C_*^{\mathrm{final}}}\eta.
+\end{equation}
+
+\clearpage
+\section{Regularity Bridge}
+\label{sec:ckn-bridge}
+
+The final regularity step is imported from standard local regularity theory,
+but the normalization must be explicit.  Define the mean-subtracted CKN
+quantity
+\begin{equation}
+\label{eq:KCKNms}
+\mathcal K_{\mathrm{CKN}}^{\mathrm{ms}}(r;z_0)
+:=
+r^{-2}\iint_{Q_r(z_0)}
+\Big(|u-\bar u_{B_r}(t)|^3
++|p-\bar p_{B_r}(t)|^{3/2}\Big)\,dx\,dt.
+\end{equation}
+
+\begin{proposition}[Imported denominator-to-CKN bridge]
+\label{prop:CKN-bridge}
+Assume the denominator compatibility used in the technical ledger:
+\[
+D(r_n)\to0
+\quad\Longrightarrow\quad
+r_n\iint_{Q_{2r_n}}|\omega|^3\,dx\,dt\to0
+\]
+and the harmless cutoff, harmonic, and pressure-projection remainders vanish.
+Then
+\[
+D(r_n)\to0
+\quad\Longrightarrow\quad
+\mathcal K_{\mathrm{CKN}}^{\mathrm{ms}}(r_n;z_0)\to0.
+\]
+Consequently, for sufficiently large \(n\), the CKN epsilon-regularity
+criterion applies at scale \(r_n\), so \(z_0\) is regular.
+\end{proposition}
+
+\begin{proof}[Imported mechanism]
+The bridge uses local Gagliardo--Nirenberg interpolation for vorticity, local
+div--curl/Biot--Savart control of the mean-subtracted velocity, local pressure
+decomposition with Calderon--Zygmund estimates, and the mean-subtracted
+Caffarelli--Kohn--Nirenberg epsilon criterion.  No source-packing argument is
+used in this final imported step.
+\end{proof}
+
+\clearpage
+\section{Conditional Closure Algebra}
+\label{sec:conditional-theorem}
+
+The theorem below is an algebraic closure theorem.  Its role is to show that
+the listed analytic inputs are sufficient for regularity.  It does not prove
+the imported K3--K7 inputs.
+
+\begin{theorem}[Algebraic conditional amplification-payment closure]
+\label{thm:conditional-closure}
+Let \(z_0\) be a candidate singular point.  Suppose the following inputs hold
+along a scale sequence \(r_n\downarrow0\):
+\begin{enumerate}
+\item \textbf{Persistent source and promotion:}
+\[
+P(r_n)\ge p_*>0
+\]
+and a finite-thickness promoted source family captures a fixed fraction
+\(\eta>0\).
+\item \textbf{Quotient-or-charge:} either the promoted family is in the
+nonredundant charge branch and
+\[
+\mathcal F_{\mathrm{phys}}^{\mathrm{final}}(r_n)
+\ge c_{\mathrm{final}}(\eta)
+\]
+holds, or the quotient-redundant branch has already been routed to a
+null-source/good-scale alternative that gives regularity.
+\item \textbf{Forward absorption:}
+\[
+P(r_n)\mathcal F_{\mathrm{phys}}^{\mathrm{final}}(r_n)
+\le
+C_{\mathrm{forw}}^{\mathrm{final}}D(r_n)+o_n(1).
+\]
+\item \textbf{Reverse matrix absorption:}
+\[
+X(r_n)\le AX(r_n)+bP(r_n)+o_n(1),
+\]
+where \(A\ge0\), \(b\ge0\), and \(\rho(A)<1\).  Here \(o_n(1)\) in the vector
+inequality denotes a vector whose components tend to zero; inequalities are
+interpreted componentwise.  Set
+\[
+C_0:=\mathbf 1^T(I-A)^{-1}b.
+\]
+\item \textbf{Strict loop gap:}
+\[
+C_{\mathrm{forw}}^{\mathrm{final}}C_0
+<
+c_{\mathrm{final}}(\eta).
+\]
+\item \textbf{CKN bridge:} Proposition~\ref{prop:CKN-bridge} applies to the
+chosen denominator \(D\).
+\end{enumerate}
+Then \(z_0\) is regular.
+\end{theorem}
+
+\begin{proof}
+If the quotient-redundant alternative has already been routed to a
+null-source/good-scale regularity conclusion, there is nothing further to
+prove.  Otherwise the contradiction sequence is in the nonredundant charge
+branch.  By
+quotient-or-charge and forward absorption,
+\[
+c_{\mathrm{final}}(\eta)P(r_n)
+\le
+P(r_n)\mathcal F_{\mathrm{phys}}^{\mathrm{final}}(r_n)
+\le
+C_{\mathrm{forw}}^{\mathrm{final}}D(r_n)+o_n(1).
+\]
+Since \(\rho(A)<1\), the reverse matrix inequality gives
+\[
+X(r_n)\le (I-A)^{-1}bP(r_n)+o_n(1),
+\]
+and therefore
+\[
+D(r_n)=\mathbf 1^TX(r_n)
+\le
+C_0P(r_n)+o_n(1).
+\]
+Substitution yields
+\[
+c_{\mathrm{final}}(\eta)P(r_n)
+\le
+C_{\mathrm{forw}}^{\mathrm{final}}C_0P(r_n)+o_n(1).
+\]
+Because \(C_{\mathrm{forw}}^{\mathrm{final}}C_0<c_{\mathrm{final}}(\eta)\)
+and \(P(r_n)\ge p_*>0\), this is impossible for large \(n\).  Thus the
+persistent-source nonredundant charge branch is ruled out, while the quotient
+branch is handled by the routed quotient/null-source alternative.  Equivalently,
+the loop forces \(P(r_n)\to0\) and then \(D(r_n)\to0\);
+Proposition~\ref{prop:CKN-bridge} gives regularity.
+\end{proof}
+
+\begin{remark}[Weighted spectral certificate]
+The condition \(\rho(A)<1\) may be certified without eigenvalue calculation.
+If \(w_i>0\) and
+\[
+q_A(w):=\max_i\frac{1}{w_i}\sum_j A_{ij}w_j<1,
+\]
+then \(\rho(A)\le q_A(w)<1\).  A usable reverse constant is
+\[
+C_0^{\mathrm{cert}}(w)
+:=
+\frac{(\sum_iw_i)\max_i(b_i/w_i)}{1-q_A(w)}.
+\]
+The certified loop gap is
+\[
+C_{\mathrm{forw}}^{\mathrm{final}}C_0^{\mathrm{cert}}(w)
+<c_{\mathrm{final}}(\eta).
+\]
+\end{remark}
+
+\clearpage
+\section{Partial Closure Results}
+\label{sec:partial-results}
+
+The following mechanisms are currently the most stable pieces of the program.
+They are stated here in simplified form; their detailed proofs and proof
+obligations are reflected in the technical ledger.
+
+\begin{proposition}[Good-scale null-source regularity]
+\label{prop:null-source}
+If the packed boundary row \eqref{eq:packed-boundary} is part of \(D(r)\) and
+\[
+\limsup_{r\downarrow0}P(r)=0,
+\]
+then there exists \(r_j\downarrow0\) such that \(D(r_j)\to0\), hence
+\(z_0\) is regular by Proposition~\ref{prop:CKN-bridge}.
+\end{proposition}
+
+\begin{proof}[Mechanism]
+The localized vorticity identity separates the collar flux into a
+source-active part and a no-source advective part.  The source-active part is
+paid by \(P\).  The no-source part obeys a logarithmic packing estimate:
+\[
+\int_r^{\Lambda r}
+\mathcal B_\omega^{\mathrm{adv,nosrc}}(s,\lambda_0)
+\frac{ds}{s}
+\le
+C_{\mathrm{avg}}D(\Lambda\lambda_0 r)+o_r(1).
+\]
+Pigeonholing selects \(s\in[r,\Lambda r]\) with contraction coefficient
+\[
+\theta_*=
+\theta_{\mathrm{cut}}(\Lambda,\lambda_0)
++\frac{C_{\mathrm{avg}}}{\log\Lambda}<1
+\]
+for large enough \(\Lambda\).  Iteration gives a good scale with \(D\to0\).
+\end{proof}
+
+\begin{proposition}[Source-doubling scale selection]
+\label{prop:source-doubling}
+If \(\limsup_{r\downarrow0}P(r)>0\), then for every fixed
+\(\Lambda_{\mathrm{par}}>1\) and \(C_{\mathrm{dbl}}>1\) there exist
+\(r_n\downarrow0\) and \(p_*>0\) such that
+\[
+P(r_n)\ge p_*,
+\qquad
+P(\Lambda_{\mathrm{par}}r_n)\le C_{\mathrm{dbl}}P(r_n).
+\]
+\end{proposition}
+
+\begin{proof}
+Assume otherwise.  Choose \(p_*<\limsup P\).  If every \(r\) with
+\(P(r)\ge p_*\) satisfies
+\[
+P(\Lambda_{\mathrm{par}}r)>C_{\mathrm{dbl}}P(r),
+\]
+then iteration gives
+\[
+P(\Lambda_{\mathrm{par}}^m r)>C_{\mathrm{dbl}}^m p_*
+\]
+while \(\Lambda_{\mathrm{par}}^m r\) remains in a fixed finite parent
+cylinder.  This contradicts local source-ledger finiteness on that parent
+cylinder as \(m\to\infty\).
+\end{proof}
+
+\begin{proposition}[Fixed-dilation promoted-tail payment]
+\label{prop:fixed-tail}
+Assume promoted-tail slices obey bounded overlap in a parent cylinder:
+\[
+\sum_{j,k}\mathbf 1_{\mathcal T_{j,k}^{\mathrm{tail}}(r)}
+\le
+N_{\mathrm{tail}}\mathbf 1_{Q_{\Lambda_{\mathrm{par}}r}(z_0)}+o_r(1).
+\]
+Along source-doubling radii,
+\[
+r_n\sum_{j,k}\iint_{\mathcal T_{j,k}^{\mathrm{tail}}(r_n)}
+\sigma_+\,dx\,dt
+\le
+C_{\mathrm{tail}}^{\mathrm{fp}}P(r_n)+o_n(1).
+\]
+\end{proposition}
+
+\begin{proposition}[Bounded macroscopic-parent tail smallness]
+\label{prop:macro-tail}
+Assume promoted-tail slices obey bounded overlap in a fixed parent cylinder:
+\[
+\sum_{j,k}\mathbf 1_{\mathcal T_{j,k}^{\mathrm{tail}}(r_n)}
+\le
+N_{\mathrm{tail}}\mathbf 1_{Q_{r_0}(z_0)}+o_n(1),
+\]
+with \(P(r_0)<\infty\).  Then
+\[
+r_n\sum_{j,k}\iint_{\mathcal T_{j,k}^{\mathrm{tail}}(r_n)}
+\sigma_+\,dx\,dt=o_n(1).
+\]
+\end{proposition}
+
+\begin{proof}
+Bounded overlap gives a parent source bound.  Since
+\[
+r_n\iint_{Q_{r_0}(z_0)}\sigma_+\,dx\,dt
+=\frac{r_n}{r_0}P(r_0)\to0,
+\]
+the fixed macroscopic parent contribution is negligible.
+\end{proof}
+
+\clearpage
+\section{Adversarial Mechanism Tests}
+\label{sec:tests}
+
+The empirical layer is an attack layer.  It checks whether the proposed
+payment channels appear in cached turbulent data and adversarial finite-radius
+audits.  It
+does not prove any continuum inequality.
+
+\subsection*{Glossary of computational labels}
+
+The labels \(c413\), \(c309\), and \(c185\) denote cached promoted-source
+candidate families extracted from Johns Hopkins Turbulence Database
+diagnostics~\cite{JHTDB2008,JHTDB2007}.  The labels \(D3,D5,D6\) denote
+denominator variants used in the tail-denominator ladder audit: \(D5\) is the
+local-plus-observed-annular
+capacity used by that audit, while \(D3\) and \(D6\) require same-row
+moving-tube or velocity-pressure CKN data that were unavailable for those
+rows.  The tag ``ARR c185 final81'' denotes the annular-renewal reservoir audit
+for the \(c185\) candidate at support size \(81\).
+
+\begin{center}
+\scriptsize
+\begin{tabular}{@{}p{0.25\linewidth}p{0.42\linewidth}p{0.25\linewidth}@{}}
+\toprule
+\textbf{Attack or audit} & \textbf{Observed result} & \textbf{Interpretation} \\
+\midrule
+Near-degenerate same-parent split &
+For \(M=1,4,8,16,32,64\), same-parent sub-tubes in cached \(c413/c309\)
+families collapse under the physical quotient; captured source remains
+\(\eta=1\). &
+Artificial label multiplicity is quotient-redundant. \\
+\addlinespace
+Renewal-cascade cross-parent jitter &
+High capture persists, but post-quotient tube growth remains large; available
+physical cost stays positive in completed \(c413/c309\) rows. &
+The attack stresses physical charge and renewal rather than producing a
+low-cost hidden packet. \\
+\addlinespace
+Tail denominator ladder &
+In 15 rows the best available denominator was \(D5\), while \(D3,D6\) were
+unresolved.\footnotemark &
+Arbitrary tail payment is not automatic; missing denominator families must be
+named, not filled by proxy. \\
+\addlinespace
+ARR \(c185\) final81 attribution &
+Renewal-exposure correction moves the ARR ratio from about \(1.022\) to
+\(0.967\). &
+Renewal exposure is a meaningful accounting channel in this audit. \\
+\addlinespace
+Coherent residual attribution &
+Finite-radius \(c413\) rows route to renewal/deactivation or signed damping,
+not to a dangerous coherent positive source. &
+Supports the residual-routing taxonomy, but does not prove the coherent row. \\
+\bottomrule
+\end{tabular}
+\end{center}
+\footnotetext{The public package includes derived cached rows and notebook
+checks, not raw JHTDB dumps or the full extraction pipeline.  The underlying
+audit recorded best ratios ranging from about \(1.27\) to \(22.56\).}
+
+\begin{remark}[Evidence fence]
+The tests are falsification and mechanism checks.  They do not prove
+source-ledger finiteness, K3 quotient-or-charge, K4 forward absorption, K5
+reverse matrix closure, K5B high-strain rigidity, or the K6 loop gap.  Their
+value is that they refuse to hide missing continuum quantities: unavailable
+rows remain marked as unresolved.
+\end{remark}
+
+\clearpage
+\section{Remaining Theorem Gates}
+\label{sec:gates}
+
+The program is useful only if the remaining gates are explicit.  The downstream
+technical gates K3 through K7 are isolated in
+\texttt{technical\_gates\_k3\_k7.pdf}; the list below is the short dependency
+ledger used by this paper.
+\begin{enumerate}
+\item \textbf{Source-ledger finiteness or truncation.}  Formulate the source
+ledger in the intended solution class, or replace \(P\) by a truncation with a
+stable limiting argument.
+
+\item \textbf{Primary source tail dichotomy/exhaustion.}  The fixed-dilation
+and bounded macroscopic-parent tail cases are controlled; genuinely nonlocal
+parents must be source-accounted or routed to charge/leakage.
+
+\item \textbf{K3 quotient-or-charge graph theorem.}  Prove the finite weighted
+graph statement \eqref{eq:K3-target-standalone}, including the oscillation
+coordinate \(\Phi_{\mathrm{osc}}\).
+
+\item \textbf{K4 forward absorption.}  Prove
+\[
+P\mathcal F_{\mathrm{phys}}^{\mathrm{final}}
+\le C_{\mathrm{forw}}^{\mathrm{final}}D+o.
+\]
+
+\item \textbf{K5B high-strain matrix rigidity.}  Prove that source-weighted
+high strain on a nonrenewing, nonseparating branch core is paid by shape,
+oscillation/twist, renewal, or separation, with the source-weighted path
+normalization and the constant \(+1\) routed to \(P\).
+
+\item \textbf{Packed boundary reverse constants.}  The packed boundary row
+closes good-scale null-source regularity.  K5 still needs reverse-row constants
+for the same packed row.
+
+\item \textbf{K6 spectral and loop-gap certification.}  Supply actual weights
+\(w\) and constants with \(q_A(w)<1\) and
+\[
+C_{\mathrm{forw}}^{\mathrm{final}}C_0<c_{\mathrm{final}}(\eta).
+\]
+
+\item \textbf{K7 compatibility under ledger edits.}  Any change to \(D(r)\)
+must preserve Proposition~\ref{prop:CKN-bridge}.
+\end{enumerate}
+
+\clearpage
+\section{Conclusion}
+\label{sec:conclusion}
+
+The proposed law is deliberately simple:
+\[
+\boxed{\mathrm{Amplification}\le\mathrm{Payment}.}
+\]
+This manuscript defines the payment ledger, states the conditional theorem,
+records the partial closures, reports adversarial mechanism tests, and names
+the gates that remain.  It is a research program paper, not a completed Clay
+proof.  Its usefulness is that it turns a vague blowup question into a finite
+set of attackable accounting failures.
+The next stage is therefore not to reinterpret the closure theorem, but to
+prove or falsify the named analytic gates K3--K7 with explicit constants.
+
+\begin{thebibliography}{99}
+
+\bibitem{Leray1934}
+J.~Leray,
+Sur le mouvement d'un liquide visqueux emplissant l'espace,
+\emph{Acta Math.} \textbf{63} (1934), 193--248.
+\href{https://doi.org/10.1007/BF02547354}{doi:10.1007/BF02547354}.
+
+\bibitem{Hopf1951}
+E.~Hopf,
+\"Uber die Anfangswertaufgabe f\"ur die hydrodynamischen Grundgleichungen,
+\emph{Math. Nachr.} \textbf{4} (1951), 213--231.
+
+\bibitem{Prodi1959}
+G.~Prodi,
+Un teorema di unicit\`a per le equazioni di Navier--Stokes,
+\emph{Ann. Mat. Pura Appl.} \textbf{48} (1959), 173--182.
+
+\bibitem{Serrin1962}
+J.~Serrin,
+On the interior regularity of weak solutions of the Navier--Stokes equations,
+\emph{Arch. Rational Mech. Anal.} \textbf{9} (1962), 187--195.
+\href{https://doi.org/10.1007/BF00253344}{doi:10.1007/BF00253344}.
+
+\bibitem{CKN1982}
+L.~Caffarelli, R.~Kohn, and L.~Nirenberg,
+Partial regularity of suitable weak solutions of the Navier--Stokes equations,
+\emph{Comm. Pure Appl. Math.} \textbf{35} (1982), 771--831.
+\href{https://doi.org/10.1002/cpa.3160350604}{doi:10.1002/cpa.3160350604}.
+
+\bibitem{BKM1984}
+J.~T.~Beale, T.~Kato, and A.~Majda,
+Remarks on the breakdown of smooth solutions for the 3-D Euler equations,
+\emph{Comm. Math. Phys.} \textbf{94} (1984), 61--66.
+\href{https://doi.org/10.1007/BF01212349}{doi:10.1007/BF01212349}.
+
+\bibitem{ConstantinFefferman1993}
+P.~Constantin and C.~Fefferman,
+Direction of vorticity and the problem of global regularity for the
+Navier--Stokes equations,
+\emph{Indiana Univ. Math. J.} \textbf{42} (1993), 775--789.
+\href{https://doi.org/10.1512/iumj.1993.42.42034}{doi:10.1512/iumj.1993.42.42034}.
+
+\bibitem{Lin1998}
+F.-H.~Lin,
+A new proof of the Caffarelli--Kohn--Nirenberg theorem,
+\emph{Comm. Pure Appl. Math.} \textbf{51} (1998), 241--257.
+\href{https://doi.org/10.1002/(SICI)1097-0312(199803)51:3\%3C241::AID-CPA2\%3E3.0.CO;2-A}{doi:10.1002/(SICI)1097-0312(199803)51:3\%3C241::AID-CPA2\%3E3.0.CO;2-A}.
+
+\bibitem{ESS2003}
+L.~Escauriaza, G.~A.~Seregin, and V.~\v{S}ver\'ak,
+\(L^{3,\infty}\)-solutions of Navier--Stokes equations and backward uniqueness,
+\emph{Russian Math. Surveys} \textbf{58} (2003), 211--250.
+\href{https://doi.org/10.1070/RM2003v058n02ABEH000609}{doi:10.1070/RM2003v058n02ABEH000609}.
+
+\bibitem{JHTDB2008}
+Y.~Li et al.,
+A public turbulence database cluster and applications to study Lagrangian
+evolution of velocity increments in turbulence,
+\emph{Journal of Turbulence} \textbf{9} (2008), N31.
+\href{https://doi.org/10.1080/14685240802376389}{doi:10.1080/14685240802376389}.
+
+\bibitem{JHTDB2007}
+E.~Perlman, R.~Burns, Y.~Li, and C.~Meneveau,
+Data exploration of turbulence simulations using a database cluster,
+in \emph{SC07: Proceedings of the 2007 ACM/IEEE Conference on
+Supercomputing}, 2007.
+\href{https://doi.org/10.1145/1362622.1362654}{doi:10.1145/1362622.1362654}.
+
+\bibitem{Hou2009}
+T.~Y.~Hou,
+Blow-up or no blow-up? A unified computational and analytic approach to
+3D incompressible Euler and Navier--Stokes equations,
+\emph{Acta Numerica} \textbf{18} (2009), 277--346.
+\href{https://doi.org/10.1017/S0962492906420018}{doi:10.1017/S0962492906420018}.
+
+\end{thebibliography}
+
+\end{document}
