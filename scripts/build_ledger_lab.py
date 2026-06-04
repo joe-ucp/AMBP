@@ -197,7 +197,7 @@ def build_data() -> dict[str, object]:
             "id": "tail",
             "title": "Tail denominator ladder",
             "type": "tail",
-            "caption": "Paid rows and unresolved rows stay different.",
+            "caption": "Assigned rows and unresolved rows stay different.",
             "sentence": "Annular tail pressure routes to the best available D5 denominator while D3 and D6 remain explicitly unresolved.",
             "counts": {
                 "rows": len(tail),
@@ -209,7 +209,7 @@ def build_data() -> dict[str, object]:
             "channels": channel_map(
                 {
                     "Source": {"state": "charged", "value": f"{len(tail)} rows"},
-                    "Tail": {"state": "paid", "value": counts_text(tail_counts)},
+                    "Tail": {"state": "charged", "value": "denominator-assigned, not closed"},
                     "Unresolved": {"state": "unresolved", "value": f"D3={unresolved_d3}, D6={unresolved_d6}"},
                 }
             ),
@@ -230,7 +230,7 @@ def build_data() -> dict[str, object]:
             "title": "ARR correction",
             "type": "gauge",
             "caption": "A named repair moves the gauge.",
-            "sentence": "Renewal exposure changes the ARR ratio from above one to below one in the cached c185 final81 row.",
+            "sentence": "Renewal exposure changes the ARR pressure ratio from above one to below one in the cached c185 final81 row.",
             "counts": {
                 "before": float(arr_row["ratio_current"]),
                 "after": float(arr_row["ratio_with_renewal_exposure"]),
@@ -247,12 +247,12 @@ def build_data() -> dict[str, object]:
             "evidence": [
                 evidence("candidate", arr_row["candidate_id"]),
                 evidence("support", arr_row["support"]),
-                evidence("ratio current", arr_row["ratio_current"]),
-                evidence("ratio with renewal", arr_row["ratio_with_renewal_exposure"]),
+                evidence("current demand/capacity ratio", arr_row["ratio_current"]),
+                evidence("renewal-corrected demand/capacity ratio", arr_row["ratio_with_renewal_exposure"]),
                 evidence("renewal fraction", arr_row["renewal_fraction"]),
                 evidence("renewal transitions", arr_row["renewal_transition_count"]),
             ],
-            "current": "The ARR ratio moves from 1.022 to 0.967 after the renewal-exposure row is named.",
+            "current": "The ARR pressure ratio moves from 1.022 to 0.967 after the renewal-exposure row is named.",
             "break": "Find a persistent ARR deficit that is not renewal, tail, boundary, coherent residual, or physical charge.",
             "unresolved": "The row is a finite-radius attribution result; it does not by itself prove the full ARR theorem.",
         },
@@ -876,7 +876,7 @@ HTML_TEMPLATE = r"""<!doctype html>
       const p = Math.min(1, (t % 5) / 3.5);
       const eased = p * p * (3 - 2 * p);
       const value = before + (after - before) * eased;
-      drawText("ARR ratio", cx, cy - 150, 18, "#ffe4a0", "center");
+      drawText("ARR pressure ratio", cx, cy - 150, 18, "#ffe4a0", "center");
       drawText(value.toFixed(3), cx, cy + 12, 76, value < 1 ? "#7ec36a" : "#e06666", "center");
       ctx.save();
       ctx.strokeStyle = "rgba(255,255,255,0.22)";

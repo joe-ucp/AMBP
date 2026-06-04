@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import math
 import sys
 from pathlib import Path
 
+import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "notebooks"))
@@ -44,9 +46,37 @@ def test_cached_ledger_worksheets_expose_decisive_columns() -> None:
 
     arr = lab.arr_ledger("cached")
     assert float(arr.iloc[-1]["ratio"]) < 1.0
+    assert arr.iloc[0]["step"] == "current demand/capacity ratio"
+    assert arr.iloc[-1]["step"] == "renewal-corrected demand/capacity ratio"
+    assert arr.iloc[0]["formula"] == "R_tail / ARR_total_current"
+    assert arr.iloc[-1]["formula"] == "R_tail / (ARR_total_current + renewal_gain)"
 
     coherent = lab.coherent_ledger("cached")
     assert {"net_fraction_of_positive", "door4_status"}.issubset(coherent.columns)
+
+
+def test_arr_ratio_formula_matches_demand_over_capacity() -> None:
+    arr = pd.read_csv(
+        ROOT / "data" / "results" / "arr_deficit_attribution_audit_c185_final81_summary.csv"
+    ).iloc[0]
+
+    demand = arr["R_tail"]
+    current_capacity = arr["ARR_total_current"]
+    renewal_gain = arr["renewal_capacity_exposure_corrected"] - arr["renewal_capacity_current"]
+    corrected_capacity = current_capacity + renewal_gain
+
+    assert math.isclose(
+        arr["ratio_current"],
+        demand / current_capacity,
+        rel_tol=1e-10,
+    )
+    assert math.isclose(
+        arr["ratio_with_renewal_exposure"],
+        demand / corrected_capacity,
+        rel_tol=1e-10,
+    )
+    assert arr["ratio_current"] > 1.0
+    assert arr["ratio_with_renewal_exposure"] < 1.0
 
 
 def test_artifact_table_names_expected_public_data_paths() -> None:
@@ -88,4 +118,8 @@ def test_ledger_lab_builds_from_real_cached_artifacts(tmp_path, monkeypatch) -> 
     assert "arr_deficit_attribution_audit_c185_final81_summary.csv" in html
     assert '"natural": 28' in html
     assert '"labeled": 224' in html
+    assert "current demand/capacity ratio" in html
+    assert "renewal-corrected demand/capacity ratio" in html
+    assert 'drawText("ARR pressure ratio"' in html
+    assert '"Tail", "state": "charged", "value": "denominator-assigned, not closed"' in html
     assert "No synthetic rows are used by this visual." in html

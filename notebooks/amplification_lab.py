@@ -384,6 +384,7 @@ def arr_scorecard(mode: str = "cached") -> dict[str, object]:
 
 def arr_ledger(mode: str = "cached") -> pd.DataFrame:
     row = arr_table(mode).iloc[0].copy()
+    demand = float(row["R_tail"])
     total = float(row["ARR_total_current"])
     deficit = float(row["deficit"])
     renewal_gain = float(row["renewal_capacity_exposure_corrected"]) - float(row["renewal_capacity_current"])
@@ -391,10 +392,10 @@ def arr_ledger(mode: str = "cached") -> pd.DataFrame:
     return pd.DataFrame(
         [
             {
-                "step": "current ARR capacity",
-                "formula": "ARR_total_current / R_tail",
-                "numerator": total,
-                "denominator": float(row["R_tail"]),
+                "step": "current demand/capacity ratio",
+                "formula": "R_tail / ARR_total_current",
+                "numerator": demand,
+                "denominator": total,
                 "ratio": float(row["ratio_current"]),
                 "interpretation": "slightly underpaid before naming the missing channel",
             },
@@ -407,12 +408,12 @@ def arr_ledger(mode: str = "cached") -> pd.DataFrame:
                 "interpretation": "the gap is small but real",
             },
             {
-                "step": "renewal exposure correction",
-                "formula": "(ARR_total_current + renewal_gain) / R_tail",
-                "numerator": repaired_capacity,
-                "denominator": float(row["R_tail"]),
+                "step": "renewal-corrected demand/capacity ratio",
+                "formula": "R_tail / (ARR_total_current + renewal_gain)",
+                "numerator": demand,
+                "denominator": repaired_capacity,
                 "ratio": float(row["ratio_with_renewal_exposure"]),
-                "interpretation": "the named renewal exposure pushes the ratio below one",
+                "interpretation": "the named renewal exposure pushes demand/capacity below one",
             },
         ]
     )
@@ -525,7 +526,7 @@ def conclusion_summary(mode: str = "cached") -> pd.DataFrame:
             {
                 "claim": "ARR deficits are repairable only when the missing channel is named.",
                 "current_read": (
-                    f"ARR ratio changes from {arr['ratio_current']:.4g} to "
+                    f"ARR pressure ratio changes from {arr['ratio_current']:.4g} to "
                     f"{arr['ratio_with_renewal_exposure']:.4g} after {arr['dominant_deficit_source']}."
                 ),
                 "implication": "A near miss becomes useful only if the deficit is attributed to a real ledger channel.",
@@ -566,7 +567,7 @@ def routing_board() -> pd.DataFrame:
                 "attack": "ARR c185 final81",
                 "pressure": "small ARR deficit",
                 "routing": "renewal exposure",
-                "headline": "renewal exposure can move an ARR ratio below 1",
+                "headline": "renewal exposure can move an ARR pressure ratio below 1",
             },
             {
                 "attack": "coherent residual",
@@ -699,9 +700,13 @@ def plot_tail_arr(mode: str = "cached"):
     axes[0].set_title("tail pressure stays named")
     axes[0].grid(True, axis="x", alpha=0.25)
 
-    axes[1].bar(["current", "with renewal"], [arr["ratio_current"], arr["ratio_with_renewal_exposure"]], color=["#a23e48", "#558b6e"])
+    axes[1].bar(
+        ["current demand/capacity", "renewal-corrected demand/capacity"],
+        [arr["ratio_current"], arr["ratio_with_renewal_exposure"]],
+        color=["#a23e48", "#558b6e"],
+    )
     axes[1].axhline(1.0, color="#222222", linewidth=1.2, linestyle="--")
-    axes[1].set_ylabel("ARR ratio")
+    axes[1].set_ylabel("ARR pressure ratio (demand / capacity)")
     axes[1].set_title("ARR repair check")
     axes[1].grid(True, axis="y", alpha=0.25)
     fig.tight_layout()
