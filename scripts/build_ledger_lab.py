@@ -197,8 +197,8 @@ def build_data() -> dict[str, object]:
             "id": "tail",
             "title": "Tail denominator ladder",
             "type": "tail",
-            "caption": "Assigned rows and unresolved rows stay different.",
-            "sentence": "Annular tail pressure routes to the best available D5 denominator while D3 and D6 remain explicitly unresolved.",
+            "caption": "Named over-budget pressure and unresolved rows stay different.",
+            "sentence": "Annular tail pressure picks D5 as the least-bad tested denominator, but every best ratio stays above one and D3 and D6 remain explicitly unresolved.",
             "counts": {
                 "rows": len(tail),
                 "profile": counts_text(tail_counts),
@@ -209,7 +209,7 @@ def build_data() -> dict[str, object]:
             "channels": channel_map(
                 {
                     "Source": {"state": "charged", "value": f"{len(tail)} rows"},
-                    "Tail": {"state": "charged", "value": "denominator-assigned, not closed"},
+                    "Tail": {"state": "charged", "value": "denominator-assigned, above 1"},
                     "Unresolved": {"state": "unresolved", "value": f"D3={unresolved_d3}, D6={unresolved_d6}"},
                 }
             ),
@@ -219,9 +219,10 @@ def build_data() -> dict[str, object]:
                 evidence("min best ratio", tail["best_ratio"].min()),
                 evidence("median best ratio", tail["best_ratio"].median()),
                 evidence("max best ratio", tail["best_ratio"].max()),
+                evidence("all best ratios < 1", "False"),
                 evidence("worst candidate", tail_worst["candidate_id"]),
             ],
-            "current": "D5 is the best available denominator in the cached rows; D3 and D6 stay named rather than filled by proxy.",
+            "current": "D5 is the least-bad tested denominator in the cached rows; every best ratio stays above one, and D3 and D6 stay named rather than filled by proxy.",
             "break": "Find annular tail mass with no finite-overlap parent payment and no named denominator or unresolved row.",
             "unresolved": f"D3 is missing in {unresolved_d3} rows; D6 is missing in {unresolved_d6} rows.",
         },

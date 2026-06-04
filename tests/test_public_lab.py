@@ -28,6 +28,7 @@ def test_cached_mode_is_available_by_default() -> None:
     assert lab.data_available() is True
     summary = lab.run_all("cached")
     assert summary["same_parent"]["all_split_rows_merge_back"] is True
+    assert summary["tail_ladder"]["all_lt_1"] is False
     assert summary["arr"]["dominant_deficit_source"] == "renewal_exposure"
 
 
@@ -41,8 +42,10 @@ def test_cached_ledger_worksheets_expose_decisive_columns() -> None:
     assert not renewal["free_jitter_candidate"].any()
 
     tail = lab.tail_ladder_ledger("cached")
-    assert {"best_ratio_recomputed", "unresolved_family_count", "is_paid_below_one"}.issubset(tail.columns)
+    assert {"best_ratio_recomputed", "unresolved_family_count", "has_below_one_closure"}.issubset(tail.columns)
     assert (tail["best_ratio"] - tail["best_ratio_recomputed"]).abs().max() < 1e-9
+    assert not tail["has_below_one_closure"].any()
+    assert tail["denominator_family_pass"].eq("bounded_not_lt_1").all()
 
     arr = lab.arr_ledger("cached")
     assert float(arr.iloc[-1]["ratio"]) < 1.0
@@ -118,8 +121,10 @@ def test_ledger_lab_builds_from_real_cached_artifacts(tmp_path, monkeypatch) -> 
     assert "arr_deficit_attribution_audit_c185_final81_summary.csv" in html
     assert '"natural": 28' in html
     assert '"labeled": 224' in html
+    assert "every best ratio stays above one" in html
+    assert '"all best ratios < 1", "value": "False"' in html
     assert "current demand/capacity ratio" in html
     assert "renewal-corrected demand/capacity ratio" in html
     assert 'drawText("ARR pressure ratio"' in html
-    assert '"Tail", "state": "charged", "value": "denominator-assigned, not closed"' in html
+    assert '"Tail", "state": "charged", "value": "denominator-assigned, above 1"' in html
     assert "No synthetic rows are used by this visual." in html

@@ -319,7 +319,7 @@ def tail_ladder_ledger(mode: str = "cached") -> pd.DataFrame:
     ratio_cols = [col for col in rows.columns if col.startswith("ratio_D")]
     rows["available_denominators"] = rows[ratio_cols].notna().sum(axis=1)
     rows["best_ratio_recomputed"] = rows[ratio_cols].min(axis=1, skipna=True)
-    rows["is_paid_below_one"] = rows["best_ratio_recomputed"].lt(1)
+    rows["has_below_one_closure"] = rows["best_ratio_recomputed"].lt(1)
     rows["unresolved_family_count"] = rows[ratio_cols].isna().sum(axis=1)
     return rows[
         [
@@ -331,7 +331,7 @@ def tail_ladder_ledger(mode: str = "cached") -> pd.DataFrame:
             "best_denominator",
             "best_ratio",
             "best_ratio_recomputed",
-            "is_paid_below_one",
+            "has_below_one_closure",
             "denominator_family_pass",
         ]
     ].sort_values("best_ratio", ascending=False)
@@ -345,19 +345,19 @@ def tail_ladder_explanation(mode: str = "cached") -> pd.DataFrame:
                 "calculation": "best available denominator",
                 "formula": "argmin_D ratio_D",
                 "observed": str(rows["best_denominator"].value_counts().idxmax()),
-                "interpretation": "the tail pressure consistently chooses the same named row",
+                "interpretation": "the tail pressure consistently chooses the same least-bad tested row",
             },
             {
                 "calculation": "best ratio range",
                 "formula": "min/median/max best_ratio",
                 "observed": f"{rows['best_ratio'].min():.3g} / {rows['best_ratio'].median():.3g} / {rows['best_ratio'].max():.3g}",
-                "interpretation": "this is a named pressure, not a hidden closure",
+                "interpretation": "every tested ratio stays over budget; no below-one closure appears",
             },
             {
                 "calculation": "unresolved rows",
                 "formula": "count missing ratio_D entries",
                 "observed": int(rows["unresolved_family_count"].sum()),
-                "interpretation": "missing denominator families stay visible",
+                "interpretation": "D3 and D6 stay visible as missing denominator families",
             },
         ]
     )
@@ -518,9 +518,9 @@ def conclusion_summary(mode: str = "cached") -> pd.DataFrame:
                 "claim": "Tail mass is not hidden; it is assigned to named denominator pressure or left unresolved.",
                 "current_read": (
                     f"Best tail denominator profile: {tail['best_denominator_counts']}; "
-                    f"worst best-ratio is {tail['best_ratio_max']:.3g}."
+                    f"best ratios stay {tail['best_ratio_min']:.3g} to {tail['best_ratio_max']:.3g}."
                 ),
-                "implication": "The notebook exposes the remaining tail pressure instead of absorbing it silently.",
+                "implication": "The notebook exposes named over-budget tail pressure instead of absorbing it silently.",
                 "how_to_break_it": "Find annular tail mass with no finite-overlap parent payment and no named denominator or unresolved row.",
             },
             {
@@ -561,7 +561,7 @@ def routing_board() -> pd.DataFrame:
                 "attack": "tail denominator ladder",
                 "pressure": "arbitrary annular tails",
                 "routing": "unresolved denominator family",
-                "headline": "D5 is best available, but missing denominator rows stay named",
+                "headline": "D5 is the least-bad tested denominator, but every best ratio stays above 1",
             },
             {
                 "attack": "ARR c185 final81",
@@ -696,8 +696,8 @@ def plot_tail_arr(mode: str = "cached"):
     labels = [f"tail case {idx}" for idx in range(1, len(tail) + 1)]
     axes[0].barh(labels, tail["best_ratio"], color=colors)
     axes[0].axvline(1.0, color="#222222", linewidth=1.2, linestyle="--")
-    axes[0].set_xlabel("best tail ratio")
-    axes[0].set_title("tail pressure stays named")
+    axes[0].set_xlabel("best tested tail ratio (>1 means unresolved)")
+    axes[0].set_title("tail pressure stays named and above 1")
     axes[0].grid(True, axis="x", alpha=0.25)
 
     axes[1].bar(
