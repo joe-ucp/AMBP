@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import amplification_lab as lab
 import build_ledger_lab
+import plot_near_degenerate_attack
 
 
 def test_synthetic_mode_runs_without_cached_data() -> None:
@@ -106,6 +107,19 @@ def test_public_plots_construct_without_cached_data() -> None:
     ):
         fig = plotter("synthetic")
         assert fig.axes
+
+
+def test_near_degenerate_plot_script_regenerates_pngs(tmp_path) -> None:
+    out_dir = tmp_path / "near_degenerate_plots"
+    eta_png, fphys_png, combined_png = plot_near_degenerate_attack.write_plots(out_dir)
+    assert plot_near_degenerate_attack.main(["--output-dir", str(out_dir)]) == 0
+    for path in (
+        eta_png,
+        fphys_png,
+        combined_png,
+    ):
+        assert path.exists()
+        assert path.stat().st_size > 0
 
 
 def test_ledger_lab_builds_from_real_cached_artifacts(tmp_path, monkeypatch) -> None:

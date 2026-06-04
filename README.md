@@ -85,6 +85,7 @@ carry proof load. List them with:
 
 ```bash
 python scripts/list_artifacts.py
+python scripts/plot_near_degenerate_attack.py
 python scripts/run_lab.py --write-json
 ```
 
@@ -119,6 +120,7 @@ own turbulence data or JHTDB cache and see whether the ledger fails.
 - `scripts/build_ledger_lab.py`: builds the local Ledger Lab visual from cached CSV artifacts.
 - `scripts/execute_notebook.py`: executes the notebook into `outputs/`.
 - `scripts/list_artifacts.py`: simple inventory helper for bundled demo rows.
+- `scripts/plot_near_degenerate_attack.py`: regenerates the bundled near-degenerate attack PNGs from the summary CSV.
 - `scripts/stage_cached_artifacts.py`: copies expected artifacts from a cache/release folder.
 - `tests/`: public smoke tests.
 - `data/results/`: bundled derived demo artifacts used by default.
