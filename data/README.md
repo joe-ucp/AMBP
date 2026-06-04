@@ -1,14 +1,13 @@
 # Data Folder
 
-This folder contains the curated cached evidence artifacts used by the public
-notebook. These are derived summary artifacts, not raw JHTDB cache dumps.
-See `ARTIFACTS.md` for row counts, byte counts, SHA256 hashes, and the
-artifact-level evidence fence.
+This folder contains the bundled derived demo artifacts used by the public
+notebook. These are small summary artifacts, not raw JHTDB cache dumps.
+See `ARTIFACTS.md` for row counts, byte counts, hashes, and provenance notes.
 
 Synthetic mode is only a schema-compatible no-data smoke test and is not JHTDB
-evidence.
+data.
 
-Required cached CSV artifacts:
+Bundled demo CSV artifacts:
 
 - `near_degenerate_multi_tube_packing_attack_summary.csv`
 - `near_degenerate_multi_tube_packing_attack_absorption_proxy.csv`

@@ -51,8 +51,8 @@ def stage(source: Path, dry_run: bool = False) -> tuple[list[str], list[str]]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Stage public cached artifacts by expected filename.")
-    parser.add_argument("source", type=Path, help="Folder containing cached evidence artifacts.")
+    parser = argparse.ArgumentParser(description="Stage bundled public demo artifacts by expected filename.")
+    parser.add_argument("source", type=Path, help="Folder containing public demo artifacts.")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
 

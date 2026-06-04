@@ -15,12 +15,12 @@ def main() -> int:
     print(table.to_string(index=False))
     missing_csv = table[(table["kind"].eq("csv")) & (~table["exists"])]
     if missing_csv.empty:
-        print("\nAll required cached evidence CSVs are present.")
+        print("\nFound expected public demo CSVs.")
         return 0
-    print("\nCached evidence CSVs are missing.")
+    print("\nSome expected public demo CSVs are missing.")
     print("Use `python scripts/run_lab.py --mode synthetic` only for a no-data smoke test.")
-    print("Synthetic mode is not JHTDB evidence.")
-    print("To reproduce paper evidence, place release CSV artifacts in `data/results/`.")
+    print("Synthetic mode is not JHTDB data.")
+    print("Place the bundled demo CSVs in `data/results/` or point your own rows at the same schema.")
     return 1
 
 

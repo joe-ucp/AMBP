@@ -1,16 +1,16 @@
 # Notices and Data Attribution
 
 This repository includes original code, notebooks, paper material, and a small
-set of curated derived evidence artifacts.
+set of bundled derived demo artifacts.
 
 ## Original Package
 
 Original code, notebooks, documentation, and paper-package materials are
 released under the MIT License. See `LICENSE`.
 
-## Curated JHTDB-Derived Evidence Artifacts
+## Bundled JHTDB-Derived Demo Artifacts
 
-Files in `data/results/` are curated summary evidence artifacts derived from
+Files in `data/results/` are bundled summary demo artifacts derived from
 experiments using the Johns Hopkins Turbulence Databases (JHTDB). They are not
 raw JHTDB cache dumps and they are not a substitute for the original database.
 The bundled artifact hashes, byte counts, and CSV row counts are recorded in
@@ -39,7 +39,7 @@ Databases (JHTDB), https://flow.pha.jhu.edu.
 
 ## Evidence Fence
 
-The cached files in `data/results/` are reproducibility aids for the public
-notebook. They are derived summaries used to inspect the amplification-payment
-ledger claim. They are not raw redistributed turbulence cache files, and they
-do not carry proof load.
+The bundled files in `data/results/` are public demo aids for the notebook.
+They are derived summaries used to inspect the amplification-payment ledger
+claim. They are not raw redistributed turbulence cache files, they do not carry
+proof load, and this repo is not a full reproduction package.

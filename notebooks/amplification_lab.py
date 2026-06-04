@@ -103,7 +103,7 @@ def require_cached_data() -> None:
     missing = missing[(missing["kind"].eq("csv")) & (~missing["exists"])]
     if not missing.empty:
         raise FileNotFoundError(
-            "Cached evidence CSVs are not bundled. Place the release artifacts in public/data/results.\n\n"
+            "Bundled public demo CSVs are missing. Place the expected files in public/data/results.\n\n"
             + missing[["demo", "path"]].to_string(index=False)
         )
 
@@ -756,7 +756,7 @@ def write_summary_json(mode: str = "cached", output: Path | None = None) -> Path
 def _write_fixture_results(output_dir: Path | None = None) -> Path:
     """Generate toy CSVs in the same shape as the public lab expects.
 
-    These are smoke-test artifacts only. They are not JHTDB evidence.
+    These are smoke-test artifacts only. They are not JHTDB data.
     """
     output_dir = output_dir or OUTPUTS / "fixture_results"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -770,7 +770,7 @@ def _write_fixture_results(output_dir: Path | None = None) -> Path:
 
 
 def write_synthetic_results(output_dir: Path | None = None) -> Path:
-    """Write schema-compatible smoke-test CSVs; these are not JHTDB evidence."""
+    """Write schema-compatible smoke-test CSVs; these are not JHTDB data."""
     output_dir = output_dir or OUTPUTS / "synthetic_results"
     return _write_fixture_results(output_dir)
 
