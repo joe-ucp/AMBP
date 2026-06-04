@@ -13,6 +13,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import amplification_lab as lab
 import build_ledger_lab
 import plot_near_degenerate_attack
+import reproduce_near_degenerate_same_parent
 
 
 def test_synthetic_mode_runs_without_cached_data() -> None:
@@ -120,6 +121,32 @@ def test_near_degenerate_plot_script_regenerates_pngs(tmp_path) -> None:
     ):
         assert path.exists()
         assert path.stat().st_size > 0
+
+
+def test_near_degenerate_reproduction_verifier_accepts_bundled_csv() -> None:
+    results_dir = ROOT / "data" / "results"
+    df = reproduce_near_degenerate_same_parent.load_csv(
+        results_dir / reproduce_near_degenerate_same_parent.FINAL_CSV_NAME,
+        reproduce_near_degenerate_same_parent.FINAL_REQUIRED_COLUMNS,
+    )
+    completed = reproduce_near_degenerate_same_parent.verify_final_csv_shape(df)
+    observed = reproduce_near_degenerate_same_parent.verify_three_fphys_values(completed, 1e-9)
+    reproduce_near_degenerate_same_parent.verify_m_invariance(completed, 1e-9)
+
+    assert len(df) == 25
+    assert len(set(observed.values())) == 3
+
+    upstream_verified, upstream_message = reproduce_near_degenerate_same_parent.verify_component_sums_if_available(
+        df=completed,
+        results_dir=results_dir,
+        benchmark_results_dir=None,
+        cache_dir=None,
+        tolerance=1e-9,
+    )
+    if upstream_verified:
+        assert "Verified upstream component sums" in upstream_message
+    else:
+        assert "Skipped upstream recomputation" in upstream_message
 
 
 def test_ledger_lab_builds_from_real_cached_artifacts(tmp_path, monkeypatch) -> None:

@@ -18,6 +18,25 @@ Bundled demo CSV artifacts:
 - `arr_deficit_attribution_audit_c185_final81_summary.csv`
 - `coherent_viscous_residual_attribution_top2_c413.csv`
 
+## Regenerating / Auditing the Near-Degenerate Same-Parent Attack
+
+Use the public reproduction bridge to inspect where
+`near_degenerate_multi_tube_packing_attack_summary.csv` comes from:
+
+```bash
+python scripts/reproduce_near_degenerate_same_parent.py --explain --verify-derived
+python scripts/reproduce_near_degenerate_same_parent.py --dry-run --run-pipeline
+```
+
+The bundled CSV is an offline derived summary from JHTDB-derived cached
+artifacts. It is not synthetic and not a direct JHTDB export. Full DNS/JHTDB
+regeneration requires the upstream benchmark pipeline plus your own JHTDB
+access or compatible local caches.
+
+`scripts/plot_near_degenerate_attack.py` regenerates figures from the final
+summary CSV. `scripts/reproduce_near_degenerate_same_parent.py` audits or
+rebuilds the data lineage that produced that CSV.
+
 Optional figure artifacts used by the notebook when present:
 
 - `near_degenerate_attack_eta_vs_M.png`

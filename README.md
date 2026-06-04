@@ -86,6 +86,7 @@ carry proof load. List them with:
 ```bash
 python scripts/list_artifacts.py
 python scripts/plot_near_degenerate_attack.py
+python scripts/reproduce_near_degenerate_same_parent.py --explain --verify-derived
 python scripts/run_lab.py --write-json
 ```
 
@@ -100,6 +101,18 @@ python scripts/stage_cached_artifacts.py C:\path\to\artifact-cache
 
 The staging script searches recursively and copies only the expected artifact
 names into `data/results/`.
+
+To audit or regenerate the near-degenerate same-parent lineage:
+
+```bash
+python scripts/reproduce_near_degenerate_same_parent.py --explain --verify-derived
+python scripts/reproduce_near_degenerate_same_parent.py --dry-run --run-pipeline
+```
+
+The bundled public CSV is a derived offline summary from JHTDB-derived cached
+artifacts. It is not synthetic and not a direct JHTDB export. Full DNS/JHTDB
+regeneration still requires the upstream benchmark pipeline plus your own JHTDB
+access or compatible cached artifacts.
 
 The intended next step is for skeptics to generate their own rows from their
 own turbulence data or JHTDB cache and see whether the ledger fails.
@@ -121,6 +134,7 @@ own turbulence data or JHTDB cache and see whether the ledger fails.
 - `scripts/execute_notebook.py`: executes the notebook into `outputs/`.
 - `scripts/list_artifacts.py`: simple inventory helper for bundled demo rows.
 - `scripts/plot_near_degenerate_attack.py`: regenerates the bundled near-degenerate attack PNGs from the summary CSV.
+- `scripts/reproduce_near_degenerate_same_parent.py`: audits or optionally rebuilds the data lineage behind the bundled same-parent attack CSV.
 - `scripts/stage_cached_artifacts.py`: copies expected artifacts from a cache/release folder.
 - `tests/`: public smoke tests.
 - `data/results/`: bundled derived demo artifacts used by default.
