@@ -33,6 +33,11 @@ artifacts. It is not synthetic and not a direct JHTDB export. Full DNS/JHTDB
 regeneration requires the upstream benchmark pipeline plus compatible seed
 inputs or local caches.
 
+The canonical reviewer-facing checklist for this lineage is
+`data/near_degenerate_same_parent_reproduction_map.md`. It records the public
+producer path, run order, input/output artifacts, column dictionary, and
+paper-to-code mapping for the same-parent summary CSV.
+
 `scripts/plot_near_degenerate_attack.py` regenerates figures from the final
 summary CSV. `scripts/reproduce_near_degenerate_same_parent.py` audits or
 rebuilds the data lineage that produced that CSV.
@@ -63,6 +68,7 @@ The three practical public paths are:
 
 Related public artifacts:
 
+- `data/near_degenerate_same_parent_reproduction_map.md`
 - `data/results/near_degenerate_column_dictionary.md`
 - `data/results/near_degenerate_column_dictionary.json`
 - `<results-dir>/near_degenerate_pipeline_manifest.json` when the orchestrator runs

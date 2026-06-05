@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PIPELINE = ROOT / "scripts" / "run_near_degenerate_jhtdb_pipeline.py"
 FINAL_CSV = ROOT / "data" / "results" / "near_degenerate_multi_tube_packing_attack_summary.csv"
 DICTIONARY_JSON = ROOT / "data" / "results" / "near_degenerate_column_dictionary.json"
+REPRODUCTION_MAP = ROOT / "data" / "near_degenerate_same_parent_reproduction_map.md"
 PARENT_CACHE_RESULTS = ROOT.parent / "benchmarks" / "jhtdb_response_family" / "results"
 PUBLISHED_INPUT_PACK = ROOT / "data" / "inputs" / "near_degenerate_published"
 
@@ -98,6 +99,31 @@ def test_column_dictionary_covers_every_final_csv_column() -> None:
     assert documented == actual
     aliases = {entry["name"] for entry in dictionary.get("legacy_aliases", [])}
     assert "split_pair_path_proxy" in aliases
+
+
+def test_reproduction_map_covers_required_sections_and_columns() -> None:
+    text = REPRODUCTION_MAP.read_text(encoding="utf-8")
+
+    required_sections = [
+        "# Near-degenerate same-parent attack: reproduction map",
+        "## 1. Run order",
+        "## 2. Producer scripts",
+        "## 3. Input artifacts",
+        "## 4. Output artifacts",
+        "## 5. Column dictionary",
+        "## 6. Paper-symbol mapping",
+        "## 7. Known limits",
+    ]
+    for heading in required_sections:
+        assert heading in text
+
+    lower = text.lower()
+    assert "mechanism testing" in lower
+    assert "does not prove the continuum inequalities" in lower
+
+    column_section = text.split("## 6. Paper-symbol mapping", maxsplit=1)[0]
+    for column in pd.read_csv(FINAL_CSV, nrows=0).columns:
+        assert f"`{column}`" in column_section
 
 
 def test_attack_summary_normalizer_restores_public_csv_contract(tmp_path: Path) -> None:

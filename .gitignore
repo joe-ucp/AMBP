@@ -11,6 +11,7 @@ data/full_jhtdb/
 data/raw/
 data/tmp/
 data/results/near_degenerate_pipeline_manifest.json
+benchmarks/jhtdb_response_family/cache/
 
 outputs/*
 !outputs/.gitkeep

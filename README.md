@@ -114,6 +114,11 @@ artifacts. It is not synthetic and not a direct JHTDB export. Fresh JHTDB
 replay uses the bundled published seed pack and the public JHTDB testing token;
 cache-backed replay requires restored upstream artifacts.
 
+The canonical reviewer-facing checklist for this CSV now lives in
+`data/near_degenerate_same_parent_reproduction_map.md`. It is the public bridge
+from producer scripts to input/output artifacts to column meanings to the
+paper-side K3 / final-ledger mapping.
+
 ## End-To-End Near-Degenerate Same-Parent Reproduction
 
 The public repo now exposes the upstream near-degenerate stage scripts under
@@ -143,6 +148,7 @@ There are now three practical rerun paths:
 
 The public bundle includes:
 
+- `data/near_degenerate_same_parent_reproduction_map.md`
 - `data/results/near_degenerate_column_dictionary.md`
 - `data/results/near_degenerate_column_dictionary.json`
 
