@@ -110,9 +110,58 @@ python scripts/reproduce_near_degenerate_same_parent.py --dry-run --run-pipeline
 ```
 
 The bundled public CSV is a derived offline summary from JHTDB-derived cached
-artifacts. It is not synthetic and not a direct JHTDB export. Full DNS/JHTDB
-regeneration still requires the upstream benchmark pipeline plus your own JHTDB
-access or compatible cached artifacts.
+artifacts. It is not synthetic and not a direct JHTDB export. Fresh JHTDB
+replay uses the bundled published seed pack and the public JHTDB testing token;
+cache-backed replay requires restored upstream artifacts.
+
+## End-To-End Near-Degenerate Same-Parent Reproduction
+
+The public repo now exposes the upstream near-degenerate stage scripts under
+`benchmarks/jhtdb_response_family/` together with a top-level public runner:
+
+```bash
+python scripts/run_near_degenerate_jhtdb_pipeline.py --published-cases --dry-run --results-dir outputs/near_degenerate_public_validation
+python scripts/run_near_degenerate_jhtdb_pipeline.py --published-cases --use-existing-cache --cache-dir PATH_TO_RESTORED_UPSTREAM_RESULTS --results-dir outputs/near_degenerate_public_validation
+python scripts/run_near_degenerate_jhtdb_pipeline.py --published-cases --require-jhtdb --results-dir outputs/near_degenerate_public_validation
+python scripts/reproduce_near_degenerate_same_parent.py --explain --verify-derived
+```
+
+The layers are intentionally separate:
+
+- Plot regeneration: `python scripts/plot_near_degenerate_attack.py`
+  Regenerates the three bundled PNGs from the final summary CSV only.
+- Derived summary audit: `python scripts/reproduce_near_degenerate_same_parent.py --explain --verify-derived`
+  Explains and verifies the existing final CSV and, when component summaries are present, recomputes the available `Fphys*` sum from upstream summaries.
+- Full pipeline runner: `python scripts/run_near_degenerate_jhtdb_pipeline.py ...`
+  Restores or reruns the upstream component summaries and then reruns the overlap, renewal, attack, plot, and published-verifier chain.
+
+There are now three practical rerun paths:
+
+- Final-CSV plotting only: regenerate PNGs from the bundled public summary CSV.
+- Cache-backed replay: point `--cache-dir` at restored upstream outputs and rerun the published lineage offline.
+- Fresh published live replay: use the bundled seed pack under `data/inputs/near_degenerate_published/` together with the public JHTDB testing-token fallback.
+
+The public bundle includes:
+
+- `data/results/near_degenerate_column_dictionary.md`
+- `data/results/near_degenerate_column_dictionary.json`
+
+The public runner writes:
+
+- `<results-dir>/near_degenerate_pipeline_manifest.json` (default published path: `outputs/near_degenerate_public_validation/near_degenerate_pipeline_manifest.json`)
+- regenerated CSVs, figures, and intermediate stage outputs under the chosen `--results-dir`
+
+Important constraints:
+
+- The repo does not ship the 10GB+ raw or intermediate cache artifacts needed for a completely fresh long-form rerun.
+- The published `c413` / `c309` live lane now ships a small seed-input pack under `data/inputs/near_degenerate_published/`.
+- Private JHTDB credentials are optional for the published live lane: when `JHTDB_TOKEN` is not set, the public runner falls back to the bounded public testing token already defined in `benchmarks/jhtdb_response_family/config.py`.
+- The public testing token may be rate-limited, and fresh live reruns can take a while.
+- Other custom live reruns may still benefit from your own token or restored cache artifacts.
+- Cached reproduction works when you point `--cache-dir` at restored upstream artifacts.
+- Published reruns now default to `outputs/near_degenerate_public_validation/` so they do not churn tracked files under `data/results/`.
+- Full reruns can be long-running.
+- The bundled public summary CSV is a numerical exhibit and audit target, not a standalone proof of the conjecture.
 
 The intended next step is for skeptics to generate their own rows from their
 own turbulence data or JHTDB cache and see whether the ledger fails.
@@ -134,10 +183,13 @@ own turbulence data or JHTDB cache and see whether the ledger fails.
 - `scripts/execute_notebook.py`: executes the notebook into `outputs/`.
 - `scripts/list_artifacts.py`: simple inventory helper for bundled demo rows.
 - `scripts/plot_near_degenerate_attack.py`: regenerates the bundled near-degenerate attack PNGs from the summary CSV.
+- `scripts/run_near_degenerate_jhtdb_pipeline.py`: public end-to-end runner for the near-degenerate same-parent lineage.
 - `scripts/reproduce_near_degenerate_same_parent.py`: audits or optionally rebuilds the data lineage behind the bundled same-parent attack CSV.
 - `scripts/stage_cached_artifacts.py`: copies expected artifacts from a cache/release folder.
+- `benchmarks/jhtdb_response_family/`: public copy of the near-degenerate stage scripts and helper modules needed for end-to-end reruns.
 - `tests/`: public smoke tests.
 - `data/results/`: bundled derived demo artifacts used by default.
+- `data/inputs/near_degenerate_published/`: small published scan/window/start inputs for the fresh live c413/c309 lane.
 - `data/ARTIFACTS.md`: derived artifact inventory and provenance notes.
 - `outputs/`: generated summaries and executed notebooks.
 

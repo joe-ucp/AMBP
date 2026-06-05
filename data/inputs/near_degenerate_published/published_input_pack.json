@@ -1,0 +1,26 @@
+{
+  "name": "near_degenerate_published",
+  "dataset": "isotropic1024coarse",
+  "notes": [
+    "This is the small public seed-input pack for the published c413/c309 same-parent lane.",
+    "It contains selected candidate scan rows, the live recentered start table, and the windows CSV needed by the public runner.",
+    "It does not contain raw JHTDB dumps or the large cache/intermediate artifact tree."
+  ],
+  "windows_csv": "material_heat_age_audit_patch17_h14_top3_real_ns_scan_n81_windows.csv",
+  "scans": [
+    {
+      "family": "top2",
+      "run_dir": "material_heat_age_audit_patch17_h14_top2_live_recentered",
+      "candidate_csv": "material_heat_age_audit_patch17_h14_top2_published_candidates.csv"
+    }
+  ],
+  "published_candidates": [
+    "lambda_abs2_omega_top2:ti14:c413:lag4",
+    "lambda_abs2_omega_top2:ti8:c309:lag8"
+  ],
+  "provenance": {
+    "windows_csv_source": "benchmarks/jhtdb_response_family/results/material_heat_age_audit_patch17_h14_top3_real_ns_scan_n81_windows.csv",
+    "run_dir_source": "benchmarks/jhtdb_response_family/results/material_heat_age_audit_patch17_h14_top2_live_recentered/material_heat_age_starts.csv",
+    "candidate_csv_source": "benchmarks/jhtdb_response_family/results/material_heat_age_audit_patch17_h14_top2_global_hotspot_ancestry_scan_n49_top120.csv"
+  }
+}

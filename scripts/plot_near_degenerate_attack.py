@@ -14,7 +14,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "data" / "results"
-INPUT_CSV = RESULTS / "near_degenerate_multi_tube_packing_attack_summary.csv"
+DEFAULT_INPUT_CSV = RESULTS / "near_degenerate_multi_tube_packing_attack_summary.csv"
 ETA_NAME = "near_degenerate_attack_eta_vs_M.png"
 FPHYS_NAME = "near_degenerate_attack_fphys_vs_M.png"
 COMBINED_NAME = "near_degenerate_attack_results_figure.png"
@@ -45,11 +45,11 @@ def label_for(case: str, radius_dx: float) -> str:
     return f"{case} r={format_radius(radius_dx)}"
 
 
-def load_plot_rows() -> pd.DataFrame:
-    if not INPUT_CSV.exists():
-        raise FileNotFoundError(f"Missing bundled CSV: {INPUT_CSV}")
+def load_plot_rows(input_csv: Path = DEFAULT_INPUT_CSV) -> pd.DataFrame:
+    if not input_csv.exists():
+        raise FileNotFoundError(f"Missing bundled CSV: {input_csv}")
 
-    df = pd.read_csv(INPUT_CSV)
+    df = pd.read_csv(input_csv)
     missing = sorted(REQUIRED_COLUMNS - set(df.columns))
     if missing:
         joined = ", ".join(missing)
@@ -196,8 +196,8 @@ def write_combined_plot(df: pd.DataFrame, output_path: Path) -> None:
     plt.close(fig)
 
 
-def write_plots(output_dir: Path = RESULTS) -> tuple[Path, Path, Path]:
-    df = load_plot_rows()
+def write_plots(output_dir: Path = RESULTS, input_csv: Path = DEFAULT_INPUT_CSV) -> tuple[Path, Path, Path]:
+    df = load_plot_rows(input_csv)
     eta_png, fphys_png, combined_png = output_paths(output_dir)
     write_eta_plot(df, eta_png)
     write_fphys_plot(df, fphys_png)
@@ -213,9 +213,15 @@ def main(argv: list[str] | None = None) -> int:
         default=RESULTS,
         help="directory to write the PNGs into (defaults to data/results)",
     )
+    parser.add_argument(
+        "--input-csv",
+        type=Path,
+        default=DEFAULT_INPUT_CSV,
+        help="summary CSV to plot (defaults to data/results/near_degenerate_multi_tube_packing_attack_summary.csv)",
+    )
     args = parser.parse_args(argv)
 
-    eta_png, fphys_png, combined_png = write_plots(args.output_dir)
+    eta_png, fphys_png, combined_png = write_plots(args.output_dir, args.input_csv)
     print(f"Wrote {display_path(eta_png)}")
     print(f"Wrote {display_path(fphys_png)}")
     print(f"Wrote {display_path(combined_png)}")

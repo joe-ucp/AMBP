@@ -1,0 +1,282 @@
+{
+  "artifact": "near_degenerate_multi_tube_packing_attack_summary.csv",
+  "artifact_path": "data/results/near_degenerate_multi_tube_packing_attack_summary.csv",
+  "notes": [
+    "Entries describe the current public CSV schema.",
+    "The incomplete c185 row is a deliberate placeholder retained by the attack script when promoted membership is unavailable."
+  ],
+  "columns": [
+    {
+      "column": "case",
+      "meaning": "Physical case token for the attacked promoted family, such as c413 or c309.",
+      "formula_or_source": "Written from natural['case'] in near_degenerate_multi_tube_packing_attack.py.",
+      "kind": "raw",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "selected promoted membership family"
+    },
+    {
+      "column": "candidate_id",
+      "meaning": "Exact hotspot candidate identifier selected from the ancestry-scan lane.",
+      "formula_or_source": "Written from natural['candidate_id']; originates in the global hotspot ancestry scan CSV.",
+      "kind": "raw",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/global_hotspot_ancestry_scan.py",
+      "upstream_source_file": "material_heat_age_audit_patch17_h14_top2_global_hotspot_ancestry_scan_n49_top120.csv"
+    },
+    {
+      "column": "radius_dx",
+      "meaning": "Finite tube radius used for the promoted family, measured in grid spacings dx.",
+      "formula_or_source": "Passed through from the promoted membership table and stored as natural['radius_dx'].",
+      "kind": "raw",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/promoted_tube_family_builder.py",
+      "upstream_source_file": "promoted_tube_family_membership_*"
+    },
+    {
+      "column": "M",
+      "meaning": "Adversarial multiplicity: how many labeled same-parent clones replace each natural tube before quotienting.",
+      "formula_or_source": "Loop variable in _split_attack_stats(..., M=...).",
+      "kind": "raw",
+      "depends_on_M": true,
+      "depends_on_candidate_or_radius": false,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "attack runner arguments"
+    },
+    {
+      "column": "delta",
+      "meaning": "Physical quotient threshold used to decide whether clone pairs survive as non-redundant.",
+      "formula_or_source": "Command-line attack parameter delta; default 0.25 in the published same_parent_split lane.",
+      "kind": "raw",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": false,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "attack runner arguments"
+    },
+    {
+      "column": "natural_tubes",
+      "meaning": "Number of natural tubes in the promoted family before any adversarial splitting.",
+      "formula_or_source": "natural['natural_tube_count'] = unique tube_id count in the promoted membership CSV.",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/promoted_tube_family_builder.py",
+      "upstream_source_file": "promoted_tube_family_membership_*"
+    },
+    {
+      "column": "pre_quotient_tubes",
+      "meaning": "Tube count immediately after the adversarial label split and before the physical quotient merges clones.",
+      "formula_or_source": "In same_parent_split: pre_quotient_tubes = natural_tubes * M.",
+      "kind": "derived",
+      "depends_on_M": true,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "same_parent_split attack construction"
+    },
+    {
+      "column": "post_quotient_tubes",
+      "meaning": "Tube count remaining after quotienting near-identical same-parent clones.",
+      "formula_or_source": "Computed after the split-family union-find quotient; in the published same_parent_split rows it equals natural_tubes.",
+      "kind": "derived",
+      "depends_on_M": true,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "same_parent_split quotient step"
+    },
+    {
+      "column": "quotient_merged_fraction",
+      "meaning": "Fraction of extra split clones removed by the physical quotient.",
+      "formula_or_source": "(pre_quotient_tubes - post_quotient_tubes) / (pre_quotient_tubes - natural_tubes), with 0 when pre_quotient_tubes <= natural_tubes.",
+      "kind": "derived",
+      "depends_on_M": true,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "same_parent_split quotient step"
+    },
+    {
+      "column": "natural_source",
+      "meaning": "Total positive source weight carried by the natural promoted family.",
+      "formula_or_source": "Sum of source_weight over the positive promoted membership rows.",
+      "kind": "cached",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/promoted_tube_family_builder.py",
+      "upstream_source_file": "promoted_tube_family_membership_*"
+    },
+    {
+      "column": "post_quotient_source",
+      "meaning": "Total captured source weight remaining after quotient.",
+      "formula_or_source": "In same_parent_split it is set equal to natural_source because the split only relabels the same physical support.",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "same_parent_split attack rows"
+    },
+    {
+      "column": "eta_post",
+      "meaning": "Post-quotient captured-source fraction.",
+      "formula_or_source": "Same_parent_split rows hard-code eta_post = 1.0 because source is perfectly conserved under pure relabeling.",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": false,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "same_parent_split attack rows"
+    },
+    {
+      "column": "raw_split_pair_pack_proxy",
+      "meaning": "Diagnostic pre-quotient overlap pressure created by the artificial split before quotienting.",
+      "formula_or_source": "In same_parent_split: raw_split_pair_pack_proxy = max(0, (M - 1) / 2).",
+      "kind": "diagnostic",
+      "depends_on_M": true,
+      "depends_on_candidate_or_radius": false,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "same_parent_split attack rows"
+    },
+    {
+      "column": "R_pack_star",
+      "meaning": "Post-quotient non-redundant packing cost available from the overlap audit.",
+      "formula_or_source": "R_pack_star = overlap_summary['R_pack']; in same_parent_split published rows it is 0 because the quotient removes the artificial same-parent duplicates before any non-redundant packing remains.",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/tube_pair_overlap_audit.py",
+      "upstream_source_file": "tube_pair_overlap_audit_*_summary.csv"
+    },
+    {
+      "column": "R_shape_fam_available",
+      "meaning": "Available family-level shape charge carried into the final physical-cost proxy.",
+      "formula_or_source": "positive_or_proxy(renewal_summary['R_shape'], dichotomy_summary['R_shape_branch']). For c309 this is 0 because both the renewal row and the dichotomy fallback are 0.",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "real_packing_weighted_renewal_audit*_summary.csv; targeted_dichotomy_audit_top2_top3_summary.csv"
+    },
+    {
+      "column": "R_spread_fam_available",
+      "meaning": "Available family-level spread charge carried into the final physical-cost proxy.",
+      "formula_or_source": "positive_or_proxy(renewal_summary['R_spread'], dichotomy_summary['R_spread_branch']).",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "real_packing_weighted_renewal_audit*_summary.csv; targeted_dichotomy_audit_top2_top3_summary.csv"
+    },
+    {
+      "column": "R_renew_fam_available",
+      "meaning": "Available family-level renewal charge carried into the final physical-cost proxy.",
+      "formula_or_source": "positive_or_proxy(renewal_summary['R_renew_total'], 0.0).",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/real_packing_weighted_renewal_audit.py",
+      "upstream_source_file": "real_packing_weighted_renewal_audit*_summary.csv"
+    },
+    {
+      "column": "R_D_available",
+      "meaning": "Available deactivation charge carried into the final physical-cost proxy.",
+      "formula_or_source": "positive_or_proxy(renewal_summary['R_D'], dichotomy_summary['R_deactivation_branch']).",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "real_packing_weighted_renewal_audit*_summary.csv; targeted_dichotomy_audit_top2_top3_summary.csv"
+    },
+    {
+      "column": "R_tail_available",
+      "meaning": "Available tail or residual branch charge carried into the final physical-cost proxy.",
+      "formula_or_source": "positive_or_proxy(dichotomy_summary['R_tail_residual_branch'], 0.0).",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/targeted_dichotomy_audit.py",
+      "upstream_source_file": "targeted_dichotomy_audit_top2_top3_summary.csv"
+    },
+    {
+      "column": "E_nu_coh_pos_available",
+      "meaning": "Available coherent positive viscous residual proxy carried into the final physical-cost proxy.",
+      "formula_or_source": "positive_or_proxy(dichotomy_summary['E_nu'], 0.0).",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/targeted_dichotomy_audit.py",
+      "upstream_source_file": "targeted_dichotomy_audit_top2_top3_summary.csv"
+    },
+    {
+      "column": "Fphys_star_available",
+      "meaning": "Available post-quotient physical-cost proxy used to judge whether the split attack stays charged.",
+      "formula_or_source": "Fphys_star_available = R_pack_star + R_spread_fam_available + R_shape_fam_available + R_renew_fam_available + R_D_available + R_tail_available + E_nu_coh_pos_available.",
+      "kind": "derived",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "final attack summary row"
+    },
+    {
+      "column": "natural_N_eff_2",
+      "meaning": "Order-2 effective tube count of the natural family, weighted by source mass.",
+      "formula_or_source": "Computed by _neff2(masses) from the natural per-tube source masses.",
+      "kind": "diagnostic",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "promoted_tube_family_membership_*"
+    },
+    {
+      "column": "natural_N_eff_half",
+      "meaning": "Order-1/2 effective tube count of the natural family, weighted by source mass.",
+      "formula_or_source": "Computed by _neff_half(masses) from the natural per-tube source masses.",
+      "kind": "diagnostic",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "promoted_tube_family_membership_*"
+    },
+    {
+      "column": "attack_status",
+      "meaning": "Human-readable classification of the outcome for that row.",
+      "formula_or_source": "Same_parent_split statuses include baseline_no_split, showcase_quotient_redundant, showcase_ledger_charged, break_low_available_Fphys, capture_lost, and not_run_missing_promoted_membership.",
+      "kind": "diagnostic",
+      "depends_on_M": true,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "final attack summary row"
+    },
+    {
+      "column": "missing_terms",
+      "meaning": "Semicolon-delimited list of continuum terms not evaluated in the cached public lane.",
+      "formula_or_source": "Built from the explicit missing list in near_degenerate_multi_tube_packing_attack.py; terms are not silently imputed.",
+      "kind": "diagnostic",
+      "depends_on_M": false,
+      "depends_on_candidate_or_radius": true,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "final attack summary row"
+    },
+    {
+      "column": "evidence_note",
+      "meaning": "Short prose note describing why the row is evidence-bearing.",
+      "formula_or_source": "Fixed explanatory text written by the final attack script.",
+      "kind": "diagnostic",
+      "depends_on_M": true,
+      "depends_on_candidate_or_radius": false,
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py",
+      "upstream_source_file": "final attack summary row"
+    }
+  ],
+  "legacy_aliases": [
+    {
+      "name": "split_pair_path_proxy",
+      "status": "not_in_current_public_csv",
+      "meaning": "Reviewer-facing draft label for split-pair diagnostics; the current public summary uses raw_split_pair_pack_proxy for the pre-quotient split pressure and stores pair-level quotient geometry in near_degenerate_multi_tube_packing_attack_phi_pairs.csv.",
+      "replaced_by": [
+        "raw_split_pair_pack_proxy",
+        "near_degenerate_multi_tube_packing_attack_phi_pairs.csv"
+      ],
+      "upstream_source_script": "benchmarks/jhtdb_response_family/near_degenerate_multi_tube_packing_attack.py"
+    }
+  ]
+}

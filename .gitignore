@@ -10,6 +10,7 @@ __pycache__/
 data/full_jhtdb/
 data/raw/
 data/tmp/
+data/results/near_degenerate_pipeline_manifest.json
 
 outputs/*
 !outputs/.gitkeep

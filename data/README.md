@@ -30,12 +30,52 @@ python scripts/reproduce_near_degenerate_same_parent.py --dry-run --run-pipeline
 
 The bundled CSV is an offline derived summary from JHTDB-derived cached
 artifacts. It is not synthetic and not a direct JHTDB export. Full DNS/JHTDB
-regeneration requires the upstream benchmark pipeline plus your own JHTDB
-access or compatible local caches.
+regeneration requires the upstream benchmark pipeline plus compatible seed
+inputs or local caches.
 
 `scripts/plot_near_degenerate_attack.py` regenerates figures from the final
 summary CSV. `scripts/reproduce_near_degenerate_same_parent.py` audits or
 rebuilds the data lineage that produced that CSV.
+
+## End-To-End Near-Degenerate Same-Parent Reproduction
+
+Use the public orchestrator when you want the full published c413/c309
+same-parent lineage instead of just the final CSV audit:
+
+```bash
+python scripts/run_near_degenerate_jhtdb_pipeline.py --published-cases --dry-run --results-dir outputs/near_degenerate_public_validation
+python scripts/run_near_degenerate_jhtdb_pipeline.py --published-cases --use-existing-cache --cache-dir PATH_TO_RESTORED_UPSTREAM_RESULTS --results-dir outputs/near_degenerate_public_validation
+python scripts/run_near_degenerate_jhtdb_pipeline.py --published-cases --require-jhtdb --results-dir outputs/near_degenerate_public_validation
+python scripts/reproduce_near_degenerate_same_parent.py --explain --verify-derived
+```
+
+What each layer does:
+
+- Plot regeneration: rewrites the bundled PNGs from `near_degenerate_multi_tube_packing_attack_summary.csv`.
+- Derived summary audit: checks the public final CSV and explains the lineage behind its repeated `Fphys*` values.
+- Full pipeline runner: restores or reruns the upstream stage outputs, writes a provenance manifest, regenerates the final CSV, regenerates the plots, and then reruns the public verifier.
+
+The three practical public paths are:
+
+- final-CSV plotting only
+- cache-backed replay from restored upstream artifacts
+- fresh published live replay using `data/inputs/near_degenerate_published/`
+
+Related public artifacts:
+
+- `data/results/near_degenerate_column_dictionary.md`
+- `data/results/near_degenerate_column_dictionary.json`
+- `<results-dir>/near_degenerate_pipeline_manifest.json` when the orchestrator runs
+
+Important limitations:
+
+- This folder does not contain the huge raw/intermediate cache artifacts needed for a full fresh rerun.
+- The published `c413` / `c309` live lane ships a small bundled input pack under `data/inputs/near_degenerate_published/`.
+- Private JHTDB credentials are optional for that published live lane because the JHTDB client falls back to the public testing token when `JHTDB_TOKEN` is not set.
+- The public testing token may be rate-limited, so fresh live reruns can be slow.
+- Broader custom live reruns may still need restored caches or your own token/input bundle.
+- Published reruns should target `outputs/near_degenerate_public_validation/` rather than rewriting tracked files in `data/results/`.
+- The bundled final CSV remains a numerical exhibit, not a stand-alone proof certificate.
 
 Optional figure artifacts used by the notebook when present:
 

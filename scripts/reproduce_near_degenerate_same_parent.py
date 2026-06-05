@@ -73,13 +73,13 @@ COMPONENT_PATTERNS = {
     ],
 }
 COMPONENT_COLUMN_ALIASES = {
-    "R_pack_star": ["R_pack_star", "post_pack", "post_pack_proxy", "raw_split_pair_pack_proxy"],
-    "R_spread_fam_available": ["R_spread_fam_available", "r_spread", "R_spread"],
-    "R_shape_fam_available": ["R_shape_fam_available", "r_shape", "R_shape"],
-    "R_renew_fam_available": ["R_renew_fam_available", "r_renew", "R_renew"],
-    "R_D_available": ["R_D_available", "r_deact", "R_deact_available"],
-    "R_tail_available": ["R_tail_available", "r_tail", "R_tail"],
-    "E_nu_coh_pos_available": ["E_nu_coh_pos_available", "e_coh", "E_nu_coh_pos", "E_coh_pos"],
+    "R_pack_star": ["R_pack_star", "R_pack", "post_pack", "post_pack_proxy", "raw_split_pair_pack_proxy"],
+    "R_spread_fam_available": ["R_spread_fam_available", "r_spread", "R_spread", "R_spread_branch"],
+    "R_shape_fam_available": ["R_shape_fam_available", "r_shape", "R_shape", "R_shape_branch"],
+    "R_renew_fam_available": ["R_renew_fam_available", "r_renew", "R_renew", "R_renew_total"],
+    "R_D_available": ["R_D_available", "r_deact", "R_deact_available", "R_D", "R_deactivation_branch"],
+    "R_tail_available": ["R_tail_available", "r_tail", "R_tail", "R_tail_residual_branch"],
+    "E_nu_coh_pos_available": ["E_nu_coh_pos_available", "e_coh", "E_nu_coh_pos", "E_coh_pos", "E_nu"],
 }
 
 
@@ -227,7 +227,13 @@ def discover_component_files(
     return discovered
 
 
-def match_component_rows(frame: pd.DataFrame, final_row: pd.Series, tolerance: float) -> pd.DataFrame:
+def match_component_rows(
+    frame: pd.DataFrame,
+    final_row: pd.Series,
+    tolerance: float,
+    *,
+    allow_candidate_fallback: bool = False,
+) -> pd.DataFrame:
     matched = frame.copy()
     shared_keys = [column for column in KEY_COLUMNS if column in frame.columns and column in final_row.index]
     if not shared_keys:
@@ -242,7 +248,16 @@ def match_component_rows(frame: pd.DataFrame, final_row: pd.Series, tolerance: f
         else:
             matched = matched[matched[column].astype(str) == str(target)]
         if matched.empty:
-            return matched
+            break
+    if not matched.empty:
+        return matched
+
+    # Some upstream proxy summaries are candidate-scoped and reused across radii.
+    if allow_candidate_fallback and "candidate_id" in frame.columns and "candidate_id" in final_row.index:
+        fallback = frame[frame["candidate_id"].astype(str) == str(final_row["candidate_id"])].copy()
+        if "case" in frame.columns and "case" in final_row.index and pd.notna(final_row["case"]):
+            fallback = fallback[fallback["case"].astype(str) == str(final_row["case"])].copy()
+        return fallback
     return matched
 
 
@@ -261,6 +276,61 @@ def pick_component_value(
     return positive_or_proxy(candidates)
 
 
+def _single_group_match(
+    frames: list[tuple[Path, pd.DataFrame]],
+    final_row: pd.Series,
+    tolerance: float,
+    *,
+    allow_candidate_fallback: bool = False,
+) -> pd.Series | None:
+    matched: list[tuple[Path, pd.Series]] = []
+    for path, frame in frames:
+        matches = match_component_rows(
+            frame,
+            final_row,
+            tolerance,
+            allow_candidate_fallback=allow_candidate_fallback,
+        )
+        if len(matches) == 1:
+            matched.append((path, matches.iloc[0]))
+        elif len(matches) > 1:
+            raise AssertionError(
+                "Upstream component match was ambiguous for "
+                f"{final_row['candidate_id']} r={final_row['radius_dx']} M={final_row['M']}."
+            )
+    if not matched:
+        return None
+    if len(matched) > 1:
+        case_token = str(final_row.get("case", ""))
+        radius_value = pd.to_numeric(pd.Series([final_row.get("radius_dx")]), errors="coerce").iloc[0]
+        radius_tag = ""
+        if pd.notna(radius_value):
+            radius_tag = f"r{str(radius_value).replace('.', 'p')}"
+            radius_tag = radius_tag.rstrip("0").rstrip(".")
+        narrowed = [
+            row
+            for path, row in matched
+            if (not case_token or case_token in path.name) and (not radius_tag or radius_tag in path.name)
+        ]
+        if len(narrowed) == 1:
+            return narrowed[0]
+        raise AssertionError(
+            "Multiple upstream component groups matched the same row for "
+            f"{final_row['candidate_id']} r={final_row['radius_dx']} M={final_row['M']}."
+        )
+    return matched[0][1]
+
+
+def _row_value(row: pd.Series | None, aliases: list[str]) -> list[object]:
+    if row is None:
+        return []
+    values: list[object] = []
+    for alias in aliases:
+        if alias in row.index:
+            values.append(row[alias])
+    return values
+
+
 def verify_component_sums_if_available(
     df: pd.DataFrame,
     results_dir: Path,
@@ -275,35 +345,48 @@ def verify_component_sums_if_available(
         return False, f"Skipped upstream recomputation because component summary files were not found for: {missing}."
 
     loaded = {
-        name: [load_csv(path) for path in paths]
+        name: [(path, load_csv(path)) for path in paths]
         for name, paths in discovered.items()
     }
     for _, final_row in df.iterrows():
-        matched_rows: list[pd.Series] = []
-        for frames in loaded.values():
-            for frame in frames:
-                matches = match_component_rows(frame, final_row, tolerance)
-                if len(matches) == 1:
-                    matched_rows.append(matches.iloc[0])
-                elif len(matches) > 1:
-                    raise AssertionError(
-                        "Upstream component match was ambiguous for "
-                        f"{final_row['candidate_id']} r={final_row['radius_dx']} M={final_row['M']}."
-                    )
-        if not matched_rows:
+        overlap_row = _single_group_match(loaded["overlap"], final_row, tolerance)
+        dichotomy_row = _single_group_match(
+            loaded["dichotomy"],
+            final_row,
+            tolerance,
+            allow_candidate_fallback=True,
+        )
+        renewal_row = _single_group_match(loaded["renewal"], final_row, tolerance)
+        if overlap_row is None and dichotomy_row is None and renewal_row is None:
             raise AssertionError(
                 "No upstream component rows matched final row "
                 f"{final_row['candidate_id']} r={final_row['radius_dx']} M={final_row['M']}."
             )
-        pieces: dict[str, float] = {}
-        for component_name in FINAL_COMPONENT_COLUMNS:
-            value = pick_component_value(component_name, matched_rows)
-            if value is None:
-                raise AssertionError(
-                    f"Matched upstream summaries do not expose {component_name} for "
-                    f"{final_row['candidate_id']} r={final_row['radius_dx']} M={final_row['M']}."
-                )
-            pieces[component_name] = value
+
+        pieces = {
+            "R_pack_star": positive_or_proxy(_row_value(overlap_row, COMPONENT_COLUMN_ALIASES["R_pack_star"])),
+            "R_spread_fam_available": positive_or_proxy(
+                _row_value(renewal_row, COMPONENT_COLUMN_ALIASES["R_spread_fam_available"])
+                + _row_value(dichotomy_row, COMPONENT_COLUMN_ALIASES["R_spread_fam_available"])
+            ),
+            "R_shape_fam_available": positive_or_proxy(
+                _row_value(renewal_row, COMPONENT_COLUMN_ALIASES["R_shape_fam_available"])
+                + _row_value(dichotomy_row, COMPONENT_COLUMN_ALIASES["R_shape_fam_available"])
+            ),
+            "R_renew_fam_available": positive_or_proxy(
+                _row_value(renewal_row, COMPONENT_COLUMN_ALIASES["R_renew_fam_available"])
+            ),
+            "R_D_available": positive_or_proxy(
+                _row_value(renewal_row, COMPONENT_COLUMN_ALIASES["R_D_available"])
+                + _row_value(dichotomy_row, COMPONENT_COLUMN_ALIASES["R_D_available"])
+            ),
+            "R_tail_available": positive_or_proxy(
+                _row_value(dichotomy_row, COMPONENT_COLUMN_ALIASES["R_tail_available"])
+            ),
+            "E_nu_coh_pos_available": positive_or_proxy(
+                _row_value(dichotomy_row, COMPONENT_COLUMN_ALIASES["E_nu_coh_pos_available"])
+            ),
+        }
         recomputed = float(sum(pieces.values()))
         actual = float(final_row["Fphys_star_available"])
         if not math.isclose(recomputed, actual, rel_tol=0.0, abs_tol=tolerance):
